@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">QuickGrocer</string>
+    <string name="categories">Categories</string>
+    <string name="sub_categories">Sub Categories</string>
+    <string name="usernameError">Enter Valid Username</string>
+    <string name="nameError">Enter Valid Name</string>
+    <string name="emailError">Enter Valid Email</string>
+    <string name="err_password">Enter a Valid Password</string>
+</resources>

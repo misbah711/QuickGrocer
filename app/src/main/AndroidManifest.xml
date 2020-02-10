@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="myproject.quickgrocer">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".User.Confirm_Order"></activity>
+        <activity android:name=".Admin.OrderList" />
+        <activity android:name=".User.SubCategoryList" />
+        <activity android:name=".User.Checkout" />
+        <activity android:name=".User.UserItemList" />
+        <activity android:name=".Admin.ItemList" />
+        <activity android:name=".Admin.AddItem" />
+        <activity android:name=".Admin.AdminDashboard" />
+        <activity android:name=".OrderActivty" />
+        <activity android:name=".User.UserDashboardActivity" />
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
