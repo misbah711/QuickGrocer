@@ -77,11 +77,13 @@ public class Checkout extends AppCompatActivity {
                         startActivity(new Intent(Checkout.this, UserDashboardActivity.class));
                     }
                 });
-                builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         startActivity(new Intent(Checkout.this, UserDashboardActivity.class));
-                        //Truncate the cart Data
+                        db = projectDatabase.getWritableDatabase();
+                        db.execSQL("delete from " + Constants.cart_tableName);
+                        db.close();
                     }
                 });
                 builder.show();
@@ -98,8 +100,7 @@ public class Checkout extends AppCompatActivity {
 
     private ArrayList<Cart> readcartList() {
         db = projectDatabase.getReadableDatabase();
-        Cursor cursor = db.rawQuery("Select id, Name, Category, SubCategory, Price, Image, " +
-                "Weight, Quantity  From Cart", new String[]{});
+        Cursor cursor = db.rawQuery("Select id, Name, Category, SubCategory, Price, Image, Weight, Quantity From Cart", new String[]{});
 
         if (cursor.moveToFirst()) {
             do {
@@ -188,47 +189,28 @@ public class Checkout extends AppCompatActivity {
 
             }
 
-           /* holder.pos.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    qty++;
-                    cart.setQty(qty);
-                }
-            });
-            holder.neg.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    qty--;
-                    cart.setQty(qty);
-                }
-            });*/
-            // updateCart();
-            db = projectDatabase.getWritableDatabase();
-            ContentValues values = new ContentValues();
-            values.put(Constants.cart_col_id, id);
-            values.put(Constants.cart_col_itemName, name);
-            values.put(Constants.cart_col_category, category);
-            values.put(Constants.cart_col_sub_category, subCategory);
-            values.put(Constants.cart_col_price, price);
-            values.put(Constants.cart_col_image, imageItem);
-            values.put(Constants.cart_col_quan, qty);
-            values.put(Constants.cart_sub_total, SubTotal);
-
-            db.update(Constants.cart_tableName, values, "id = ?", new String[]{String.valueOf(id)});
-            db.close();
-
+            Log.e("cartQty", String.valueOf(qty));
             calculatePrice(id);
             calculateTotal();
-            setAdapter();
-
-
+            holder.itemQtyText.setNumber(String.valueOf(qty));
+            holder.itemQtyText.setOnValueChangeListener(new ElegantNumberButton.OnValueChangeListener() {
+                @Override
+                public void onValueChange(ElegantNumberButton view, int oldValue, int newValue) {
+//                    Log.e("Value", String.valueOf(oldValue + " - " + newValue));
+                    qty = newValue;
+                    //  cart.setQty(qty);
+                    updateCart(id, qty);
+                }
+            });
             holder.delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     db = projectDatabase.getWritableDatabase();
-                    db.delete("Cart", "id = ?", new String[]{String.valueOf(id)});
+                    db.delete(Constants.cart_tableName, "id = ?", new String[]{String.valueOf(id)});
+                    calculatePrice(id);
+                    calculateTotal();
+                    notifyDataSetChanged();
                     setAdapter();
-
                 }
             });
         }
@@ -253,6 +235,7 @@ public class Checkout extends AppCompatActivity {
                 itemSubCategory = itemView.findViewById(R.id.subcategory);
                 delete = itemView.findViewById(R.id.delitem);
                 itemQtyText = itemView.findViewById(R.id.number_button);
+                weight = itemView.findViewById(R.id.fweight);
 
             }
         }
