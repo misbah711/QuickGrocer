@@ -30,45 +30,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/itemname"
-                android:layout_marginLeft="5dp"
+                android:layout_marginLeft="10dp"
                 android:text="Item Name"
+                android:textColor="#000000"
                 android:textSize="20sp"
                 android:textStyle="bold"/>
-            <LinearLayout
-                android:layout_width="match_parent"
+
+            <TextView
+                android:layout_marginLeft="10dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="3">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/icategory"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="1"
-                    android:text="Category"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/iprice"
-                    android:layout_marginLeft="5dp"
-                    android:text="RS. 123"
-                    android:gravity="end"
-                    android:layout_weight="1"
-                    android:textSize="20sp"
-                    android:textStyle="bold"/>
-                <TextView
-                    android:layout_marginLeft="10dp"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/fweight"
-                    android:gravity="end"
-                    android:layout_weight="1"
-                    android:text="0.750"
-                    android:textSize="20sp" />
-            </LinearLayout>
+                android:id="@+id/fweight"
+                android:gravity="end"
+                android:text="0.750"
+                android:textSize="22sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -78,13 +53,22 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_marginLeft="5dp"
+                    android:id="@+id/iprice"
                     android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center_vertical"
+                    android:text="RS. 123"
+                    android:textColor="#000000"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/subcategory"
-                    android:layout_weight="1"
-                    android:text="Sub Category"
-                    android:textSize="18sp" />
+                    android:orientation="horizontal"
+                    android:gravity="end">
                 <com.cepheuen.elegantnumberbutton.view.ElegantNumberButton
                     android:id="@+id/number_button"
                     android:layout_width="150dp"
@@ -102,7 +86,7 @@
                     android:layout_margin="5dp"
                     android:src="@drawable/delete"/>
 
-
+                </LinearLayout>
 
             </LinearLayout>
         </LinearLayout>

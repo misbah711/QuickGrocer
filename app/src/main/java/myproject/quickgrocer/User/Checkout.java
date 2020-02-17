@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -74,6 +75,8 @@ public class Checkout extends AppCompatActivity {
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        projectDatabase.confirmOrder();
+                        Toast.makeText(Checkout.this, "Order has been Confirmed", Toast.LENGTH_LONG).show();
                         startActivity(new Intent(Checkout.this, UserDashboardActivity.class));
                     }
                 });
@@ -110,7 +113,7 @@ public class Checkout extends AppCompatActivity {
                 String subCategory = cursor.getString(3);
                 double Price = cursor.getDouble(4);
                 String Image = cursor.getString(5);
-                double Weight = cursor.getDouble(6);
+                String Weight = cursor.getString(6);
                 int Quantity = cursor.getInt(7);
                 Log.e("Cart List", Image + "--" + Name + "- " + Price);
 
@@ -139,8 +142,8 @@ public class Checkout extends AppCompatActivity {
         Context context;
         private List<Cart> cartList;
         private int id, qty;
-        double price, weight;
-        String name, category, subCategory, imageItem;
+        double price;
+        String name, weight, category, subCategory, imageItem;
 
         public CartAdapter(Context context, ArrayList<Cart> cartList) {
             this.context = context;
@@ -171,9 +174,7 @@ public class Checkout extends AppCompatActivity {
             Log.e("Cart id", id + "-" + name + price);
 
             holder.itemName.setText(name);
-            holder.itemCategory.setText(category);
-            holder.itemPrice.setText(String.valueOf(price));
-            holder.itemSubCategory.setText(subCategory);
+            holder.itemPrice.setText("Rs. " + String.valueOf(price));
             holder.weight.setText(String.valueOf(weight));
             Log.e("cartQty", String.valueOf(qty));
             //holder.itemQtyText.setText(String.valueOf(qty));
@@ -223,7 +224,7 @@ public class Checkout extends AppCompatActivity {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             ImageView icon, delete;
-            TextView itemName, itemPrice, itemCategory, itemSubCategory, weight;
+            TextView itemName, itemPrice, weight;
             ElegantNumberButton itemQtyText;
 
             public ViewHolder(@NonNull View itemView) {
@@ -231,8 +232,6 @@ public class Checkout extends AppCompatActivity {
                 icon = itemView.findViewById(R.id.itemImage);
                 itemName = itemView.findViewById(R.id.itemname);
                 itemPrice = itemView.findViewById(R.id.iprice);
-                itemCategory = itemView.findViewById(R.id.icategory);
-                itemSubCategory = itemView.findViewById(R.id.subcategory);
                 delete = itemView.findViewById(R.id.delitem);
                 itemQtyText = itemView.findViewById(R.id.number_button);
                 weight = itemView.findViewById(R.id.fweight);

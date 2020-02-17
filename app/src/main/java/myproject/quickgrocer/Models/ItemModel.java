@@ -10,21 +10,22 @@ public class ItemModel {
     String itemSubCategory;
     String itemImage;
 
-    public double getWeight() {
+    public String getWeight() {
         return weight;
     }
 
-    public void setWeight(double weight) {
+    public void setWeight(String weight) {
         this.weight = weight;
     }
 
     int itemQuantity;
-    double weight;
+    String weight;
     String image;
 
     public String getImage() {
         return image;
     }
+
     public void setImage(String image) {
         this.image = image;
     }
@@ -54,11 +55,13 @@ public class ItemModel {
         this.itemName = itemName;
     }
 
-   public double getItemPrice() {
+    public double getItemPrice() {
         return itemPrice;
     }
 
-    public void setItemPrice(double  itemPrice) { this.itemPrice = itemPrice; }
+    public void setItemPrice(double itemPrice) {
+        this.itemPrice = itemPrice;
+    }
 
     public String getItemCategory() {
         return itemCategory;
@@ -67,9 +70,6 @@ public class ItemModel {
     public void setItemCategory(String itemCategory) {
         this.itemCategory = itemCategory;
     }
-
-
-
 
 
     public String getItemImage() {

@@ -28,13 +28,14 @@ import java.util.List;
 import myproject.quickgrocer.Constants;
 import myproject.quickgrocer.Database.ProjectDatabase;
 import myproject.quickgrocer.Models.ItemModel;
+import myproject.quickgrocer.Models.OrderModel;
 import myproject.quickgrocer.R;
 
 public class OrderList extends AppCompatActivity {
     RecyclerView recyclerView;
     ProjectDatabase projectDatabase;
-    private ArrayList<ItemModel> itemList;
-    ItemModel itemModel;
+    private ArrayList<OrderModel> orderList;
+    OrderModel orderModel;
     public static OrderListAdapter orderListAdapter;
     SQLiteDatabase db;
 
@@ -46,7 +47,7 @@ public class OrderList extends AppCompatActivity {
 
 
         projectDatabase = new ProjectDatabase(this);
-        itemList = new ArrayList<>();
+        orderList = new ArrayList<>();
 
         recyclerView = findViewById(R.id.recyvlerView);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -71,10 +72,11 @@ public class OrderList extends AppCompatActivity {
     }
 
 
-    private ArrayList<ItemModel> readAllData() {
+    private ArrayList<OrderModel> readAllData() {
         db = projectDatabase.getReadableDatabase();
-        Cursor cursor = db.rawQuery("Select " + Constants.item_col_id + ", " + Constants.item_col_itemName + ", " + Constants.item_col_category
-                + ", " + Constants.item_col_sub_category + ", " + Constants.item_col_price + ", " + Constants.item_col_image + " From " + Constants.item_tableName, new String[]{});
+        Cursor cursor = db.rawQuery("Select " + Constants.cart_col_id + ", " + Constants.cart_col_itemName + ", " + Constants.cart_col_category
+                + ", " + Constants.cart_col_sub_category + ", " + Constants.cart_col_price + ", " + Constants.cart_col_image +
+                ", " + Constants.cart_col_quan + ", " + Constants.cart_col_weight + " From " + Constants.order_tableName, new String[]{});
 
         if (cursor.moveToFirst()) {
             do {
@@ -84,31 +86,35 @@ public class OrderList extends AppCompatActivity {
                 String SubCategory = cursor.getString(3);
                 double Price = cursor.getDouble(4);
                 String Image = cursor.getString(5);
+                int quan = cursor.getInt(6);
+                String weight = cursor.getString(7);
 
-                itemModel = new ItemModel();
-                itemModel.setId(id);
-                itemModel.setItemName(FoodName);
-                itemModel.setItemCategory(Category);
-                itemModel.setItemSubCategory(SubCategory);
-                itemModel.setItemPrice((int) Price);
-                itemModel.setItemImage(Image);
-                itemList.add(itemModel);
+                orderModel = new OrderModel();
+                orderModel.setId(id);
+                orderModel.setName(FoodName);
+                orderModel.setCategory(Category);
+                orderModel.setSubCategory(SubCategory);
+                orderModel.setPrice((int) Price);
+                orderModel.setImg(Image);
+                orderModel.setQty(quan);
+                orderModel.setWeight(weight);
+                orderList.add(orderModel);
             } while (cursor.moveToNext());
         }
         cursor.close();
         db.close();
 
-        return itemList;
+        return orderList;
 
     }
 
     private class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapter.ViewHolder> {
         Context context;
-        private List<ItemModel> foodList;
+        private List<OrderModel> orderLists;
 
-        public OrderListAdapter(Context context, ArrayList<ItemModel> itemModel) {
+        public OrderListAdapter(Context context, ArrayList<OrderModel> orderLists) {
             this.context = context;
-            this.foodList = itemModel;
+            this.orderLists = orderLists;
         }
 
         @NonNull
@@ -122,18 +128,22 @@ public class OrderList extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull OrderListAdapter.ViewHolder holder, final int position) {
             holder.itemView.requestLayout();
-            final int id = foodList.get(position).getId();
-            final String name = foodList.get(position).getItemName();
-            final String category = foodList.get(position).getItemCategory();
-            final String subCategory = foodList.get(position).getItemSubCategory();
-            final double price = foodList.get(position).getItemPrice();
-            final String imageFood = foodList.get(position).getItemImage();
+            final int id = orderList.get(position).getId();
+            final String name = orderList.get(position).getName();
+            final String category = orderList.get(position).getCategory();
+            final String subCategory = orderList.get(position).getSubCategory();
+            final double price = orderList.get(position).getPrice();
+            final String imageFood = orderList.get(position).getImg();
+            final String weight = orderList.get(position).getWeight();
+            final int Quan = orderList.get(position).getQty() ;
             Log.e("Data", imageFood + "-" + name + price + subCategory);
             holder.edit.setVisibility(View.GONE);
             holder.Name.setText(name);
             holder.Category.setText(category);
             holder.SubCategory.setText(subCategory);
-            holder.Price.setText(String.valueOf(price));
+            holder.Price.setText("Rs. " + String.valueOf(price));
+            holder.weight.setText(weight);
+            holder.quan.setText(String.valueOf(Quan));
 
             if (imageFood.length() > 1) {
                 String uri = "@drawable/" + imageFood;
@@ -176,12 +186,12 @@ public class OrderList extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return itemList.size();
+            return orderList.size();
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             ImageView icon, delete, edit;
-            TextView Name, Price, Category, SubCategory;
+            TextView Name, Price, Category, SubCategory, weight, quan;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -190,6 +200,8 @@ public class OrderList extends AppCompatActivity {
                 Price = itemView.findViewById(R.id.fPrice);
                 Category = itemView.findViewById(R.id.food_Category);
                 SubCategory = itemView.findViewById(R.id.item_subCategory);
+                weight = itemView.findViewById(R.id.item_weight);
+                quan = itemView.findViewById(R.id.item_quan);
                 delete = itemView.findViewById(R.id.delItem);
                 edit = itemView.findViewById(R.id.editItem);
 

@@ -27,8 +27,8 @@ public class AddItem extends AppCompatActivity implements AdapterView.OnItemSele
     Spinner category;
     EditText name, price, editTextImage, subCate, weight;
     Button add_item, clear, update;
-    String strCat, strName, strImage, strSubCat;
-    double strPrice, strWeight;
+    String strCat, strName, strImage, strSubCat, strWeight;
+    double strPrice;
     ProjectDatabase projectDatabase;
     public static String Grocery = "Grocery";
     public static String Bevarages = "Bevarages";
@@ -67,7 +67,7 @@ public class AddItem extends AppCompatActivity implements AdapterView.OnItemSele
                 strPrice = Double.parseDouble(price.getText().toString());
                 strImage = editTextImage.getText().toString().toLowerCase();
                 strSubCat = subCate.getText().toString();
-                strWeight = Double.parseDouble(weight.getText().toString());
+                strWeight = weight.getText().toString();
                 if (strImage.equals("")){
                     strImage = "ic_launcher";
                 }

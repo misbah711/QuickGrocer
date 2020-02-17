@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
     app:cardCornerRadius="10dp"
+    android:padding="5dp"
     app:cardElevation="5dp">
 
     <LinearLayout
@@ -16,13 +17,12 @@
 
         <ImageView
             android:id="@+id/imageFood"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:src="@mipmap/ic_launcher" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_marginLeft="5dp"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
@@ -30,42 +30,50 @@
                 android:id="@+id/foodName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="Food Name"
-                android:textSize="24sp"
+                android:layout_marginLeft="10dp"
+                android:text="Item Name"
+                android:textColor="#000000"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="5dp"
                 android:orientation="horizontal"
                 android:weightSum="2">
 
                 <TextView
-                    android:id="@+id/fPrice"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/fWeight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
                     android:layout_weight="1"
-                    android:text="Rs. 123"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
+                    android:text="0.750"
+                    android:textSize="22sp"/>
+
 
                 <ImageView
                     android:id="@+id/cart"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="30dp"
                     android:layout_weight="1"
                     android:src="@drawable/cart" />
+
             </LinearLayout>
 
             <TextView
-                android:id="@+id/fWeight"
+                android:id="@+id/fPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
                 android:layout_weight="1"
-                android:text="0.750"
-                android:textSize="22sp"
+                android:text="Rs. 123"
+                android:textColor="#000000"
+                android:textSize="20sp"
                 android:textStyle="bold" />
+
 
         </LinearLayout>
     </LinearLayout>

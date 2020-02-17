@@ -31,4 +31,8 @@ public class Constants {
     public static String cart_sub_total = "SubTotal";
     public static String cart_col_weight = "Weight";
 
+    public static String order_tableName = "Orders";
+
+
+
 }

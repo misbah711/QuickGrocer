@@ -5,13 +5,13 @@ public class Cart {
     double price , subTotal;
     int id;
     int qty;
-    double weight;
+    String weight;
 
-    public double getWeight() {
+    public String getWeight() {
         return weight;
     }
 
-    public void setWeight(double weight) {
+    public void setWeight(String weight) {
         this.weight = weight;
     }
 

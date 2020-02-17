@@ -73,7 +73,7 @@ public class ItemList extends AppCompatActivity {
     private ArrayList<ItemModel> readAllData() {
         db = projectDatabase.getReadableDatabase();
         Cursor cursor = db.rawQuery("Select " + Constants.item_col_id + ", " + Constants.item_col_itemName + ", " + Constants.item_col_category
-                 + ", "  + Constants.item_col_sub_category  + ", " + Constants.item_col_price + ", " + Constants.item_col_image + " From " + Constants.item_tableName, new String[]{});
+                + ", " + Constants.item_col_sub_category + ", " + Constants.item_col_price + ", " + Constants.item_col_image + ", " + Constants.item_col_weight +  " From " + Constants.item_tableName, new String[]{});
 
         if (cursor.moveToFirst()) {
             do {
@@ -83,6 +83,7 @@ public class ItemList extends AppCompatActivity {
                 String SubCategory = cursor.getString(3);
                 double Price = cursor.getDouble(4);
                 String Image = cursor.getString(5);
+                String Weight = cursor.getString(6);
 
                 itemModel = new ItemModel();
                 itemModel.setId(id);
@@ -91,6 +92,7 @@ public class ItemList extends AppCompatActivity {
                 itemModel.setItemSubCategory(SubCategory);
                 itemModel.setItemPrice((int) Price);
                 itemModel.setItemImage(Image);
+                itemModel.setWeight(Weight);
                 itemList.add(itemModel);
             } while (cursor.moveToNext());
         }
@@ -127,21 +129,23 @@ public class ItemList extends AppCompatActivity {
             final String subCategory = foodList.get(position).getItemSubCategory();
             final double price = foodList.get(position).getItemPrice();
             final String imageFood = foodList.get(position).getItemImage();
+            final String itemWeight = foodList.get(position).getWeight();
             Log.e("Data", imageFood + "-" + name + price + subCategory);
+
 
             holder.Name.setText(name);
             holder.Category.setText(category);
             holder.SubCategory.setText(subCategory);
-            holder.Price.setText(String.valueOf(price));
+            holder.Price.setText("Rs. " + String.valueOf(price));
+            holder.itemWeight.setText(itemWeight);
 
-            if(imageFood.length() > 1) {
+            if (imageFood.length() > 1) {
                 String uri = "@drawable/" + imageFood;
                 Log.e("image", uri);
                 int imageResource = getResources().getIdentifier(uri, null, getPackageName());
                 Drawable res = getResources().getDrawable(imageResource);
                 holder.icon.setImageDrawable(res);
-            }
-            else{
+            } else {
                 holder.icon.setImageResource(R.mipmap.ic_launcher);
             }
 
@@ -154,6 +158,7 @@ public class ItemList extends AppCompatActivity {
                     intent.putExtra(Constants.item_col_category, category);
                     intent.putExtra(Constants.item_col_sub_category, subCategory);
                     intent.putExtra(Constants.item_col_price, price);
+
 
                     startActivity(intent);
                 }
@@ -194,7 +199,7 @@ public class ItemList extends AppCompatActivity {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             ImageView icon, delete, edit;
-            TextView Name, Price, Category, SubCategory;
+            TextView Name, Price, Category, itemWeight, SubCategory;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -205,6 +210,8 @@ public class ItemList extends AppCompatActivity {
                 SubCategory = itemView.findViewById(R.id.item_subCategory);
                 delete = itemView.findViewById(R.id.delItem);
                 edit = itemView.findViewById(R.id.editItem);
+                itemWeight = itemView.findViewById(R.id.item_weight);
+
 
             }
         }

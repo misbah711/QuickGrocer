@@ -73,7 +73,7 @@ public class UserItemList extends AppCompatActivity {
             do {
                 String FoodName = cursor.getString(0);
                 double Price = cursor.getDouble(1);
-                double weight = cursor.getDouble(2);
+                String weight = cursor.getString(2);
                 String Image = cursor.getString(3);
                 Log.e(" Food List", FoodName + "- " + Price);
 
@@ -139,11 +139,11 @@ public class UserItemList extends AppCompatActivity {
             final String FoodName = foodList.get(position).getItemName();
             final double price = foodList.get(position).getItemPrice();
             final String image = foodList.get(position).getItemImage();
-            final double weight = foodList.get(position).getWeight();
+            final String weightt = foodList.get(position).getWeight();
 
-            holder.weight.setText(String.valueOf(weight));
+            holder.weight.setText(weightt);
             holder.foodName.setText(FoodName);
-            holder.price.setText(String.valueOf(price));
+            holder.price.setText("Rs. " + String.valueOf(price));
             Log.e("Read Data", FoodName + price);
 
             if (image.length() > 0) {
@@ -158,7 +158,7 @@ public class UserItemList extends AppCompatActivity {
             cart.setCategory(getCat);
             cart.setSubCategory(getSubCat);
             cart.setPrice(price);
-            cart.setWeight(weight);
+            cart.setWeight(weightt);
             cart.setQty(1);
             cart.setImg(image);
 

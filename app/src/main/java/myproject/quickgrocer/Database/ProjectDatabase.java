@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import myproject.quickgrocer.Constants;
 
@@ -28,6 +29,7 @@ import static myproject.quickgrocer.Constants.item_col_price;
 import static myproject.quickgrocer.Constants.item_col_sub_category;
 import static myproject.quickgrocer.Constants.item_col_weight;
 import static myproject.quickgrocer.Constants.item_tableName;
+import static myproject.quickgrocer.Constants.order_tableName;
 import static myproject.quickgrocer.Constants.user_col_email;
 import static myproject.quickgrocer.Constants.user_col_fullName;
 import static myproject.quickgrocer.Constants.user_col_id;
@@ -61,6 +63,17 @@ public class ProjectDatabase extends SQLiteOpenHelper {
                 item_col_image + " text)"
         );
         db.execSQL("create table " + cart_tableName + "(" +
+                cart_col_id + " integer primary key autoincrement, " +
+                cart_col_itemName + " text, " +
+                cart_col_category + " text, " +
+                cart_col_sub_category + " text, " +
+                cart_col_price + " text, " +
+                cart_col_image + " text, " +
+                cart_col_weight + " text, " +
+                cart_col_quan + " text, " +
+                cart_sub_total + " text)"
+        );
+        db.execSQL("create table " + order_tableName + "(" +
                 cart_col_id + " integer primary key autoincrement, " +
                 cart_col_itemName + " text, " +
                 cart_col_category + " text, " +
@@ -112,7 +125,7 @@ public class ProjectDatabase extends SQLiteOpenHelper {
             return false;
     }
 
-    public long addFood(String ItemName, String Category, String SubCategory, double Price, double weight, String image) {
+    public long addFood(String ItemName, String Category, String SubCategory, double Price, String weight, String image) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(item_col_itemName, ItemName);
@@ -127,7 +140,7 @@ public class ProjectDatabase extends SQLiteOpenHelper {
         return res;
     }
 
-    public long insertCart(String FoodName, String Category, String subCategory, double Price, String image, double weight, int qty, double subTotal) {
+    public long insertCart(String FoodName, String Category, String subCategory, double Price, String image, String weight, int qty, double subTotal) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(cart_col_itemName, FoodName);
@@ -144,5 +157,14 @@ public class ProjectDatabase extends SQLiteOpenHelper {
         return res;
     }
 
-
+    public void confirmOrder() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            db.execSQL("INSERT INTO " + order_tableName + " SELECT * FROM " +
+                    cart_tableName);
+        } catch (Exception e) {
+            Log.e("Order Exception", e.getMessage());
+        }
+    }
 }
+
