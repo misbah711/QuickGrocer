@@ -111,6 +111,7 @@ public class AddItem extends AppCompatActivity implements AdapterView.OnItemSele
 
     }
 
+
     private void updateValues() {
         final int getId = getIntent().getIntExtra(Constants.item_col_id, -1);
         final String getFName = getIntent().getStringExtra(Constants.item_col_itemName);
@@ -118,6 +119,7 @@ public class AddItem extends AppCompatActivity implements AdapterView.OnItemSele
         final String getFSubCat = getIntent().getStringExtra(Constants.item_col_sub_category);
         final double getFPrice = getIntent().getDoubleExtra(Constants.item_col_price, -1);
         final String getFImage = getIntent().getStringExtra(Constants.item_col_image);
+        final String getWeight = getIntent().getStringExtra(Constants.item_col_weight);
         Log.e("Receive Data", getId + "-" + getFName + "-" + getFCat + "-" + getFPrice);
 
         if (getId == -1 && getFName == null && getFCat == null && getFPrice == -1) {
@@ -129,6 +131,7 @@ public class AddItem extends AppCompatActivity implements AdapterView.OnItemSele
             name.setText(getFName);
             subCate.setText(getFSubCat);
             price.setText(String.valueOf(getFPrice));
+            weight.setText(getWeight);
             editTextImage.setText(getFImage);
             update.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -138,6 +141,7 @@ public class AddItem extends AppCompatActivity implements AdapterView.OnItemSele
                         strPrice = Double.parseDouble(price.getText().toString());
                         strImage = editTextImage.getText().toString();
                         strSubCat = subCate.getText().toString();
+                        strWeight = weight.getText().toString();
                         if (strImage.equals("")){
                             strImage = "ic_launcher";
                         }

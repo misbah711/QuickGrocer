@@ -25,8 +25,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import myproject.quickgrocer.Admin.AddItem;
+import myproject.quickgrocer.Admin.AdminDashboard;
 import myproject.quickgrocer.Constants;
 import myproject.quickgrocer.Database.ProjectDatabase;
+import myproject.quickgrocer.MainActivity;
 import myproject.quickgrocer.R;
 
 import static myproject.quickgrocer.Constants.item_col_category;
@@ -68,9 +70,9 @@ public class SubCategoryList extends AppCompatActivity {
         if (cursor.moveToFirst()) {
             do {
                 String SubCategory = cursor.getString(0);
-                Log.e("Sub Category List", SubCategory);
+                //Log.e("Sub Category List", SubCategory);
                 subCategoryList.add(SubCategory);
-                Log.e("List", subCategoryList.toString());
+                //Log.e("List", subCategoryList.toString());
 
             } while (cursor.moveToNext());
         }
@@ -96,6 +98,10 @@ public class SubCategoryList extends AppCompatActivity {
             case R.id.checkoout:
                 startActivity(new Intent(this, Checkout.class));
                 return true;
+            case R.id.logout:
+                startActivity(new Intent(this, MainActivity.class));
+                SubCategoryList.this.finish();
+                return true;
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -115,13 +121,13 @@ public class SubCategoryList extends AppCompatActivity {
 
         @NonNull
         @Override
-        public SubCategoryAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(context).inflate(R.layout.category_list_items, parent, false);
-            return new SubCategoryAdapter.ViewHolder(view);
+            return new ViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull SubCategoryAdapter.ViewHolder holder, final int position) {
+        public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
             holder.itemView.requestLayout();
             final String subCat = subCatList.get(position);
             holder.textView.setText(subCat);

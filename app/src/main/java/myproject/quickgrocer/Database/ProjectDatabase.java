@@ -10,6 +10,16 @@ import android.widget.Toast;
 
 import myproject.quickgrocer.Constants;
 
+import static myproject.quickgrocer.Constants.adminOrder_col_category;
+import static myproject.quickgrocer.Constants.adminOrder_col_id;
+import static myproject.quickgrocer.Constants.adminOrder_col_image;
+import static myproject.quickgrocer.Constants.adminOrder_col_itemName;
+import static myproject.quickgrocer.Constants.adminOrder_col_price;
+import static myproject.quickgrocer.Constants.adminOrder_col_qty;
+import static myproject.quickgrocer.Constants.adminOrder_col_sub_category;
+import static myproject.quickgrocer.Constants.adminOrder_col_weight;
+import static myproject.quickgrocer.Constants.adminOrder_tableName;
+import static myproject.quickgrocer.Constants.adminOrder_userName;
 import static myproject.quickgrocer.Constants.cart_col_category;
 import static myproject.quickgrocer.Constants.cart_col_id;
 import static myproject.quickgrocer.Constants.cart_col_image;
@@ -18,7 +28,6 @@ import static myproject.quickgrocer.Constants.cart_col_price;
 import static myproject.quickgrocer.Constants.cart_col_quan;
 import static myproject.quickgrocer.Constants.cart_col_sub_category;
 import static myproject.quickgrocer.Constants.cart_col_weight;
-import static myproject.quickgrocer.Constants.cart_sub_total;
 import static myproject.quickgrocer.Constants.cart_tableName;
 import static myproject.quickgrocer.Constants.databaseName;
 import static myproject.quickgrocer.Constants.item_col_category;
@@ -29,9 +38,9 @@ import static myproject.quickgrocer.Constants.item_col_price;
 import static myproject.quickgrocer.Constants.item_col_sub_category;
 import static myproject.quickgrocer.Constants.item_col_weight;
 import static myproject.quickgrocer.Constants.item_tableName;
+import static myproject.quickgrocer.Constants.order_custName;
 import static myproject.quickgrocer.Constants.order_tableName;
 import static myproject.quickgrocer.Constants.user_col_email;
-import static myproject.quickgrocer.Constants.user_col_fullName;
 import static myproject.quickgrocer.Constants.user_col_id;
 import static myproject.quickgrocer.Constants.user_col_password;
 import static myproject.quickgrocer.Constants.user_col_username;
@@ -48,7 +57,6 @@ public class ProjectDatabase extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + Constants.user_tableName + "(" +
                 user_col_id + " integer primary key autoincrement, " +
-                user_col_fullName + " text, " +
                 user_col_email + " text, " +
                 user_col_username + " text, " +
                 user_col_password + " text)"
@@ -70,8 +78,7 @@ public class ProjectDatabase extends SQLiteOpenHelper {
                 cart_col_price + " text, " +
                 cart_col_image + " text, " +
                 cart_col_weight + " text, " +
-                cart_col_quan + " text, " +
-                cart_sub_total + " text)"
+                cart_col_quan + " text)"
         );
         db.execSQL("create table " + order_tableName + "(" +
                 cart_col_id + " integer primary key autoincrement, " +
@@ -82,7 +89,18 @@ public class ProjectDatabase extends SQLiteOpenHelper {
                 cart_col_image + " text, " +
                 cart_col_weight + " text, " +
                 cart_col_quan + " text, " +
-                cart_sub_total + " text)"
+                order_custName + " text)"
+        );
+        db.execSQL("create table " + adminOrder_tableName + "(" +
+                adminOrder_col_id + " integer primary key autoincrement, " +
+                adminOrder_col_itemName + " text, " +
+                adminOrder_col_category + " text, " +
+                adminOrder_col_sub_category + " text, " +
+                adminOrder_col_price + " text, " +
+                adminOrder_col_image + " text, " +
+                adminOrder_col_qty + " text, " +
+                adminOrder_userName + " text, " +
+                adminOrder_col_weight + " text)"
         );
     }
 
@@ -95,10 +113,9 @@ public class ProjectDatabase extends SQLiteOpenHelper {
     }
 
     //    start Login or Register
-    public long addUser(String fullName, String email, String userName, String password) {
+    public long addUser(String email, String userName, String password) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(user_col_fullName, fullName);
         contentValues.put(user_col_email, email);
         contentValues.put(user_col_username, userName);
         contentValues.put(user_col_password, password);
@@ -140,7 +157,7 @@ public class ProjectDatabase extends SQLiteOpenHelper {
         return res;
     }
 
-    public long insertCart(String FoodName, String Category, String subCategory, double Price, String image, String weight, int qty, double subTotal) {
+    public long insertCart(String FoodName, String Category, String subCategory, double Price, String image, String weight, int qty) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(cart_col_itemName, FoodName);
@@ -150,21 +167,46 @@ public class ProjectDatabase extends SQLiteOpenHelper {
         contentValues.put(cart_col_image, image);
         contentValues.put(cart_col_weight, weight);
         contentValues.put(cart_col_quan, qty);
-        contentValues.put(cart_sub_total, subTotal);
         long res = db.insert(cart_tableName, null, contentValues);
         db.close();
         Log.e("Cart res", String.valueOf(res));
         return res;
     }
 
-    public void confirmOrder() {
+    public long confirmOrder(String FoodName, String Category, String subCategory, double Price, String image, String weight, int qty, String CustName) {
         SQLiteDatabase db = this.getWritableDatabase();
-        try {
-            db.execSQL("INSERT INTO " + order_tableName + " SELECT * FROM " +
-                    cart_tableName);
-        } catch (Exception e) {
-            Log.e("Order Exception", e.getMessage());
-        }
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(cart_col_itemName, FoodName);
+        contentValues.put(cart_col_category, Category);
+        contentValues.put(cart_col_sub_category, subCategory);
+        contentValues.put(cart_col_price, Price);
+        contentValues.put(cart_col_image, image);
+        contentValues.put(cart_col_weight, weight);
+        contentValues.put(cart_col_quan, qty);
+        contentValues.put(order_custName, CustName);
+        long res = db.insert(order_tableName, null, contentValues);
+        db.close();
+        Log.e("Cart res", String.valueOf(res));
+        return res;
+    }
+
+    public long insertAdminOrder(String FoodName, String Category, String SubCategory,
+                                 double Price, String image, int qty, String CustName, String Weight) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(adminOrder_col_itemName, FoodName);
+        contentValues.put(adminOrder_col_category, Category);
+        contentValues.put(adminOrder_col_sub_category, SubCategory);
+        contentValues.put(adminOrder_col_price, Price);
+        contentValues.put(adminOrder_col_image, image);
+        contentValues.put(adminOrder_col_qty, qty);
+        contentValues.put(adminOrder_userName, CustName);
+        contentValues.put(adminOrder_col_weight, Weight);
+
+        long res = db.insert(adminOrder_tableName, null, contentValues);
+        db.close();
+        Log.e("Cart res", String.valueOf(res));
+        return res;
     }
 }
 

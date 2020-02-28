@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
@@ -22,8 +23,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import myproject.quickgrocer.Admin.AdminDashboard;
 import myproject.quickgrocer.Constants;
 import myproject.quickgrocer.Database.ProjectDatabase;
+import myproject.quickgrocer.MainActivity;
 import myproject.quickgrocer.Models.Cart;
 import myproject.quickgrocer.Models.ItemModel;
 import myproject.quickgrocer.R;
@@ -75,7 +78,7 @@ public class UserItemList extends AppCompatActivity {
                 double Price = cursor.getDouble(1);
                 String weight = cursor.getString(2);
                 String Image = cursor.getString(3);
-                Log.e(" Food List", FoodName + "- " + Price);
+                // Log.e(" Food List", FoodName + "- " + Price);
 
                 itemModel = new ItemModel();
                 itemModel.setItemName(FoodName);
@@ -85,7 +88,7 @@ public class UserItemList extends AppCompatActivity {
                 itemModel.setWeight(weight);
                 itemModel.setItemImage(Image);
                 foodList.add(itemModel);
-                Log.e("List", foodList.toString());
+                // Log.e("List", foodList.toString());
 
             } while (cursor.moveToNext());
         }
@@ -109,6 +112,10 @@ public class UserItemList extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.checkoout:
                 startActivity(new Intent(this, Checkout.class));
+                return true;
+            case R.id.logout:
+                startActivity(new Intent(this, MainActivity.class));
+                UserItemList.this.finish();
                 return true;
 
             default:
@@ -139,18 +146,24 @@ public class UserItemList extends AppCompatActivity {
             final String FoodName = foodList.get(position).getItemName();
             final double price = foodList.get(position).getItemPrice();
             final String image = foodList.get(position).getItemImage();
-            final String weightt = foodList.get(position).getWeight();
+            final String weight = foodList.get(position).getWeight();
 
-            holder.weight.setText(weightt);
+            holder.weight.setText(weight);
             holder.foodName.setText(FoodName);
             holder.price.setText("Rs. " + String.valueOf(price));
-            Log.e("Read Data", FoodName + price);
+            // Log.e("Read Data", FoodName + price);
 
             if (image.length() > 0) {
                 String uri = "@drawable/" + image;
+                Log.e("image", uri);
                 int imageResource = getResources().getIdentifier(uri, null, getPackageName());
-                Drawable res = getResources().getDrawable(imageResource);
-                holder.imageView.setImageDrawable(res);
+                try {
+                    Drawable res = getResources().getDrawable(imageResource);
+                    holder.imageView.setImageDrawable(res);
+                } catch (Resources.NotFoundException e) {
+                    holder.imageView.setImageResource(R.mipmap.ic_launcher);
+
+                }
             }
 
             final Cart cart = new Cart();
@@ -158,7 +171,7 @@ public class UserItemList extends AppCompatActivity {
             cart.setCategory(getCat);
             cart.setSubCategory(getSubCat);
             cart.setPrice(price);
-            cart.setWeight(weightt);
+            cart.setWeight(weight);
             cart.setQty(1);
             cart.setImg(image);
 
@@ -166,9 +179,7 @@ public class UserItemList extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     try {
-//                        Log.e("Cart Data", cart.getName() + cart.getName() + cart.getCategory() + cart.getSubCategory() );
-
-                        long res = projectDatabase.insertCart(FoodName, cart.getCategory(), cart.getSubCategory(), cart.getPrice(), cart.getImg(), cart.getWeight(), cart.getQty(), 0.0);
+                        long res = projectDatabase.insertCart(FoodName, cart.getCategory(), cart.getSubCategory(), cart.getPrice(), cart.getImg(), cart.getWeight(), cart.getQty());
                         if (res > 0) {
                             Toast.makeText(UserItemList.this, "Item Added to your Cart", Toast.LENGTH_SHORT).show();
                         } else {

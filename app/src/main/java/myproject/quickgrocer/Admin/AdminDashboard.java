@@ -40,11 +40,12 @@ public class AdminDashboard extends AppCompatActivity {
         list_order.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(AdminDashboard.this, OrderList.class));
+                startActivity(new Intent(AdminDashboard.this, ListbyName.class));
             }
         });
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

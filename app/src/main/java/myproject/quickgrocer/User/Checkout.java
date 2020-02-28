@@ -4,12 +4,15 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -31,6 +34,7 @@ import java.util.List;
 
 import myproject.quickgrocer.Constants;
 import myproject.quickgrocer.Database.ProjectDatabase;
+import myproject.quickgrocer.MainActivity;
 import myproject.quickgrocer.Models.Cart;
 import myproject.quickgrocer.R;
 
@@ -43,7 +47,6 @@ public class Checkout extends AppCompatActivity {
     Cart cart;
     TextView totalPrice;
     Button checkout;
-    int SubTotal, total;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +78,42 @@ public class Checkout extends AppCompatActivity {
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        projectDatabase.confirmOrder();
-                        Toast.makeText(Checkout.this, "Order has been Confirmed", Toast.LENGTH_LONG).show();
+                        db = projectDatabase.getReadableDatabase();
+                        Cursor cursor = db.rawQuery("Select id, ItemName, Category, SubCategory, Price, Image, Weight, Quantity From Cart", new String[]{});
+
+                        if (cursor.moveToFirst()) {
+                            do {
+                                int id = cursor.getInt(0);
+                                String Name = cursor.getString(1);
+                                String Category = cursor.getString(2);
+                                String SubCategory = cursor.getString(3);
+                                double Price = cursor.getDouble(4);
+                                String Image = cursor.getString(5);
+                                String Weight = cursor.getString(6);
+                                int Quantity = cursor.getInt(7);
+
+
+                                long res = projectDatabase.confirmOrder(Name, Category, SubCategory,
+                                        Price, Image, Weight, Quantity, UserDashboardActivity.user);
+                                Log.e("App Confirm", String.valueOf(res));
+                                Log.e("App Name", Name);
+
+                                db = projectDatabase.getWritableDatabase();
+                                db.execSQL("delete from " + Constants.cart_tableName);
+                                db.close();
+
+
+                            } while (cursor.moveToNext());
+                        }
+
+                        cursor.close();
+
+                        Toast.makeText(Checkout.this, "Your Order is Confirmed", Toast.LENGTH_LONG).show();
                         startActivity(new Intent(Checkout.this, UserDashboardActivity.class));
+                        Checkout.this.finish();
+                /*        projectDatabase.confirmOrder();
+                        Toast.makeText(Checkout.this, "Order has been Confirmed", Toast.LENGTH_LONG).show();
+                        startActivity(new Intent(Checkout.this, UserDashboardActivity.class));*/
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -103,7 +139,7 @@ public class Checkout extends AppCompatActivity {
 
     private ArrayList<Cart> readcartList() {
         db = projectDatabase.getReadableDatabase();
-        Cursor cursor = db.rawQuery("Select id, Name, Category, SubCategory, Price, Image, Weight, Quantity From Cart", new String[]{});
+        Cursor cursor = db.rawQuery("Select id, ItemName, Category, SubCategory, Price, Image, Weight, Quantity From Cart", new String[]{});
 
         if (cursor.moveToFirst()) {
             do {
@@ -115,7 +151,7 @@ public class Checkout extends AppCompatActivity {
                 String Image = cursor.getString(5);
                 String Weight = cursor.getString(6);
                 int Quantity = cursor.getInt(7);
-                Log.e("Cart List", Image + "--" + Name + "- " + Price);
+                // Log.e("Cart List", Image + "--" + Name + "- " + Price);
 
                 cart = new Cart();
                 cart.setId(id);
@@ -138,10 +174,34 @@ public class Checkout extends AppCompatActivity {
         return cartList;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.checkout_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.checkoout:
+                startActivity(new Intent(this, Checkout.class));
+                return true;
+            case R.id.logout:
+                startActivity(new Intent(this, MainActivity.class));
+                Checkout.this.finish();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     private class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         Context context;
         private List<Cart> cartList;
-        private int id, qty;
+        private int cartId, qty;
         double price;
         String name, weight, category, subCategory, imageItem;
 
@@ -155,7 +215,7 @@ public class Checkout extends AppCompatActivity {
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(context).inflate(R.layout.activity_checkout_list, parent, false);
 
-            return new CartAdapter.ViewHolder(view);
+            return new ViewHolder(view);
         }
 
 
@@ -163,7 +223,7 @@ public class Checkout extends AppCompatActivity {
         public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
 
             holder.itemView.requestLayout();
-            id = cartList.get(position).getId();
+            cartId = cartList.get(position).getId();
             name = cartList.get(position).getName();
             category = cartList.get(position).getCategory();
             subCategory = cartList.get(position).getSubCategory();
@@ -171,49 +231,51 @@ public class Checkout extends AppCompatActivity {
             weight = cartList.get(position).getWeight();
             qty = cartList.get(position).getQty();
             imageItem = cartList.get(position).getImg();
-            Log.e("Cart id", id + "-" + name + price);
+            // Log.e("Cart ids", String.valueOf(cartId));
 
             holder.itemName.setText(name);
             holder.itemPrice.setText("Rs. " + String.valueOf(price));
             holder.weight.setText(String.valueOf(weight));
-            Log.e("cartQty", String.valueOf(qty));
-            //holder.itemQtyText.setText(String.valueOf(qty));
+//            Log.e("cartQty", String.valueOf(qty));
 
             if (imageItem.length() > 0) {
                 String uri = "@drawable/" + imageItem;
                 Log.e("image", uri);
                 int imageResource = getResources().getIdentifier(uri, null, getPackageName());
-                Drawable res = getResources().getDrawable(imageResource);
-                holder.icon.setImageDrawable(res);
-            } else {
-                holder.icon.setImageResource(R.mipmap.ic_launcher);
+                try {
+                    Drawable res = getResources().getDrawable(imageResource);
+                    holder.icon.setImageDrawable(res);
+                } catch (Resources.NotFoundException e) {
+                    holder.icon.setImageResource(R.mipmap.ic_launcher);
 
+                }
             }
 
-            Log.e("cartQty", String.valueOf(qty));
-            calculatePrice(id);
+            //    Log.e("Cart cartQty", String.valueOf(cart));
             calculateTotal();
             holder.itemQtyText.setNumber(String.valueOf(qty));
             holder.itemQtyText.setOnValueChangeListener(new ElegantNumberButton.OnValueChangeListener() {
                 @Override
                 public void onValueChange(ElegantNumberButton view, int oldValue, int newValue) {
-//                    Log.e("Value", String.valueOf(oldValue + " - " + newValue));
-                    qty = newValue;
-                    //  cart.setQty(qty);
-                    updateCart(id, qty);
+                    cart = cartList.get(position);
+                    cartId = cartList.get(position).getId();
+                    cart.setQty(newValue);
+                    updateCart();
+
+                    Log.e("Pos", String.valueOf(position) + "--" + cartId);
                 }
             });
             holder.delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     db = projectDatabase.getWritableDatabase();
-                    db.delete(Constants.cart_tableName, "id = ?", new String[]{String.valueOf(id)});
-                    calculatePrice(id);
+                    db.delete(Constants.cart_tableName, "id = ?", new String[]{String.valueOf(cartId)});
                     calculateTotal();
                     notifyDataSetChanged();
                     setAdapter();
                 }
             });
+
         }
 
 
@@ -241,52 +303,30 @@ public class Checkout extends AppCompatActivity {
 
         private void calculateTotal() {
             db = projectDatabase.getReadableDatabase();
-            Cursor cursorTotal = db.rawQuery("SELECT SUM(" + Constants.cart_sub_total + ") as Total FROM " + Constants.cart_tableName, null);
+            Cursor cursorTotal = db.rawQuery("SELECT SUM(" + Constants.cart_col_quan + " * " + Constants.cart_col_price + ") as Total FROM " + Constants.cart_tableName, null);
             if (cursorTotal.moveToFirst()) {
                 int total = cursorTotal.getInt(cursorTotal.getColumnIndex("Total"));
-                Log.e("Total", String.valueOf(total));
-                totalPrice.setText("Rs. " + String.valueOf(total));
+                // Log.e("Total", String.valueOf(total));
+                totalPrice.setText("Rs. " + total);
             }
             cursorTotal.close();
             db.close();
         }
 
-        private void calculatePrice(int id) {
-            db = projectDatabase.getReadableDatabase();
-            try {
-                Cursor curSubTotal = db.rawQuery("Select " + Constants.cart_col_quan + " * " + Constants.cart_col_price + " as SubTotal From " + Constants.cart_tableName, null);
-                if (curSubTotal.moveToFirst()) {
-                    SubTotal = curSubTotal.getInt(curSubTotal.getColumnIndex("SubTotal"));
-                    Log.e("SubTotal", String.valueOf(SubTotal));
-                    //cart.setSubTotal(SubTotal);
 
-                    db = projectDatabase.getWritableDatabase();
-                    ContentValues values = new ContentValues();
-                    values.put(Constants.cart_sub_total, SubTotal);
-                    db.update(Constants.cart_tableName, values, "id = ?", new String[]{String.valueOf(id)});
-                    db.close();
-                }
-                curSubTotal.close();
-
-                //db.close();
-            } catch (Exception e) {
-                Log.e("Excep", e.toString());
-            }
-        }
-
-        private void updateCart(int id, int qty) {
+        private void updateCart() {
             db = projectDatabase.getWritableDatabase();
             ContentValues values = new ContentValues();
-            values.put(Constants.cart_col_id, id);
-            //values.put(Constants.cart_col_fName, cart.getName());
-            //values.put(Constants.cart_col_category, cart.getCategory());
-            //values.put(Constants.cart_col_price, cart.getPrice());
-            values.put(Constants.cart_col_quan, qty);
-            //values.put(Constants.cart_col_subTotal, cart.getSubTotal());
+            values.put(Constants.cart_col_quan, cart.getQty());
+            try {
+                String query = String.format("UPDATE Cart SET Quantity= %s WHERE id = %d", cart.getQty(), cart.getId());
+                db.execSQL(query);
+                db.close();
+            } catch (Exception e) {
+                Log.e("Qu Exce", e.toString());
+            }
+            //db.update(Constants.cart_tableName, values, "id = ?", new String[]{String.valueOf(id)});
 
-            db.update(Constants.cart_tableName, values, "id = ?", new String[]{String.valueOf(id)});
-            db.close();
-            calculatePrice(id);
             calculateTotal();
             notifyDataSetChanged();
             setAdapter();

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
@@ -67,6 +68,13 @@ public class ItemList extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         foodListAdapter.notifyDataSetChanged();
+        setAdapter();
+    }
+
+    public void setAdapter() {
+        itemList.clear();
+        foodListAdapter = new FoodListAdapter(this, readAllData());
+        recyclerView.setAdapter(foodListAdapter);
     }
 
 
@@ -139,14 +147,17 @@ public class ItemList extends AppCompatActivity {
             holder.Price.setText("Rs. " + String.valueOf(price));
             holder.itemWeight.setText(itemWeight);
 
-            if (imageFood.length() > 1) {
+            if (imageFood.length() > 0) {
                 String uri = "@drawable/" + imageFood;
                 Log.e("image", uri);
                 int imageResource = getResources().getIdentifier(uri, null, getPackageName());
-                Drawable res = getResources().getDrawable(imageResource);
-                holder.icon.setImageDrawable(res);
-            } else {
-                holder.icon.setImageResource(R.mipmap.ic_launcher);
+                try {
+                    Drawable res = getResources().getDrawable(imageResource);
+                    holder.icon.setImageDrawable(res);
+                } catch (Resources.NotFoundException e) {
+                    holder.icon.setImageResource(R.mipmap.ic_launcher);
+
+                }
             }
 
             holder.edit.setOnClickListener(new View.OnClickListener() {
@@ -157,9 +168,8 @@ public class ItemList extends AppCompatActivity {
                     intent.putExtra(Constants.item_col_itemName, name);
                     intent.putExtra(Constants.item_col_category, category);
                     intent.putExtra(Constants.item_col_sub_category, subCategory);
+                    intent.putExtra(Constants.item_col_weight, itemWeight);
                     intent.putExtra(Constants.item_col_price, price);
-
-
                     startActivity(intent);
                 }
             });
@@ -176,6 +186,8 @@ public class ItemList extends AppCompatActivity {
                             db.delete(Constants.item_tableName, Constants.item_col_id + " = ?", new String[]{String.valueOf(id)});
                             Toast.makeText(context, "Item has been deleted", Toast.LENGTH_SHORT).show();
                             dialog.cancel();
+                            notifyDataSetChanged();
+                            setAdapter();
 
                         }
                     });

@@ -1,4 +1,4 @@
-package myproject.quickgrocer.User;
+package myproject.quickgrocer.Admin;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,27 +20,29 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import myproject.quickgrocer.Admin.AddItem;
-import myproject.quickgrocer.Admin.AdminDashboard;
-import myproject.quickgrocer.Admin.ItemList;
-import myproject.quickgrocer.Database.ProjectDatabase;
-import myproject.quickgrocer.MainActivity;
-import myproject.quickgrocer.R;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import myproject.quickgrocer.Database.ProjectDatabase;
+import myproject.quickgrocer.MainActivity;
+import myproject.quickgrocer.R;
+import myproject.quickgrocer.User.Checkout;
+import myproject.quickgrocer.User.SubCategoryList;
+import myproject.quickgrocer.User.UserDashboardActivity;
+
 import static myproject.quickgrocer.Constants.item_col_category;
 import static myproject.quickgrocer.Constants.item_tableName;
+import static myproject.quickgrocer.Constants.order_custName;
+import static myproject.quickgrocer.Constants.order_tableName;
 
-public class UserDashboardActivity extends AppCompatActivity {
+public class ListbyName extends AppCompatActivity {
     RecyclerView recyclerView;
-    CategoriesAdapter categoriesAdapter;
+    ByListApter byListApter;
     TextView textView;
     ProjectDatabase projectDatabase;
     SQLiteDatabase db;
     public static String user;
-    ArrayList<String> categoryList;
+    ArrayList<String> userlist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,25 +50,23 @@ public class UserDashboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dashboard);
         recyclerView = findViewById(R.id.recyvlerView);
 
-        textView = findViewById(R.id.usernameText);
-        user = getIntent().getStringExtra("Username");
-        textView.setText("Welcome\n" + user);
-        projectDatabase = new ProjectDatabase(UserDashboardActivity.this);
-        categoryList = new ArrayList<>();
+
+        projectDatabase = new ProjectDatabase(ListbyName.this);
+        userlist = new ArrayList<>();
 
         recyclerView = findViewById(R.id.recyvlerView);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        categoriesAdapter = new CategoriesAdapter(UserDashboardActivity.this, readCategories());
-        recyclerView.setAdapter(categoriesAdapter);
+        byListApter = new ByListApter(ListbyName.this, readusername());
+        recyclerView.setAdapter(byListApter);
 
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.checkout_menu, menu);
+        getMenuInflater().inflate(R.menu.logout_menu, menu);
         return true;
     }
 
@@ -75,12 +74,10 @@ public class UserDashboardActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.checkoout:
-                startActivity(new Intent(this, Checkout.class));
-                return true;
+
             case R.id.logout:
                 startActivity(new Intent(this, MainActivity.class));
-                UserDashboardActivity.this.finish();
+                ListbyName.this.finish();
                 return true;
 
             default:
@@ -89,16 +86,17 @@ public class UserDashboardActivity extends AppCompatActivity {
     }
 
 
-    private ArrayList<String> readCategories() {
+    private ArrayList<String> readusername() {
         db = projectDatabase.getReadableDatabase();
-        Cursor cursor = db.rawQuery("Select DISTINCT " + item_col_category + " From " + item_tableName, new String[]{});
+
+        Cursor cursor = db.rawQuery("Select DISTINCT " + order_custName + " From " + order_tableName, new String[]{});
 
         if (cursor.moveToFirst()) {
             do {
-                String Category = cursor.getString(0);
+                String username = cursor.getString(0);
                 //Log.e("Category List", Category);
-                categoryList.add(Category);
-               // Log.e("List", categoryList.toString());
+                userlist.add(username);
+                // Log.e("List", categoryList.toString());
 
             } while (cursor.moveToNext());
         }
@@ -106,51 +104,39 @@ public class UserDashboardActivity extends AppCompatActivity {
         cursor.close();
         db.close();
 
-        return categoryList;
+        return userlist;
 
     }
 
-    public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.ViewHolder> {
-        private List<String> catList;
+    public class ByListApter extends RecyclerView.Adapter<ByListApter.ViewHolder> {
+        private List<String> userList;
         Context context;
 
-        public CategoriesAdapter(Context context, ArrayList<String> cateList) {
+        public ByListApter(Context context, ArrayList<String> userList) {
             this.context = context;
-            this.catList = cateList;
+            this.userList = userList;
         }
 
 
         @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public ByListApter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(context).inflate(R.layout.category_list_items, parent, false);
-            return new ViewHolder(view);
+            return new ByListApter.ViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+        public void onBindViewHolder(@NonNull ByListApter.ViewHolder holder, final int position) {
             holder.itemView.requestLayout();
-            final String categ = catList.get(position);
-            holder.textView.setText(categ);
-            if (categ.equals(AddItem.Bevarages)) {
-                holder.imageView.setImageResource(R.drawable.bevarage);
-            } else if (categ.equals(AddItem.Grocery)) {
-                holder.imageView.setImageResource(R.drawable.grocery);
-            } else if (categ.equals(AddItem.Bakery)) {
-                holder.imageView.setImageResource(R.drawable.bakery);
-            } else if (categ.equals(AddItem.HomeCare)) {
-                holder.imageView.setImageResource(R.drawable.homecare);
-            } else {
-                holder.imageView.setImageResource(R.mipmap.ic_launcher);
-
-            }
+            final String username = userList.get(position);
+            holder.textView.setText(username);
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // Toast.makeText(context, categ, Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(UserDashboardActivity.this, SubCategoryList.class);
-                    intent.putExtra("Category", categ);
+                    Intent intent = new Intent(ListbyName.this, OrderList.class);
+                    intent.putExtra("username", username);
                     startActivity(intent);
                 }
             });
@@ -158,16 +144,16 @@ public class UserDashboardActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return catList.size();
+            return userList.size();
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
-            ImageView imageView;
+
             TextView textView;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
-                imageView = itemView.findViewById(R.id.imageView);
+
                 textView = itemView.findViewById(R.id.textView);
             }
         }

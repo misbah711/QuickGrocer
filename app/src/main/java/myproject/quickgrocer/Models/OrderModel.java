@@ -6,6 +6,16 @@ public class OrderModel {
     double price;
     int id;
     int qty;
+    String CustName;
+
+    public String getCustName() {
+        return CustName;
+    }
+
+    public void setCustName(String custName) {
+        CustName = custName;
+    }
+
     String weight;
 
     public String getImg() {

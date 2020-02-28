@@ -4,10 +4,14 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -20,28 +24,39 @@ import myproject.quickgrocer.Database.ProjectDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    EditText username, password, name, email;
+    EditText user, pass, mail;
     Button register, login;
-    String strName, strUserName, strPassword, strEmail;
+    String strUserName, strPassword, strEmail;
     ProjectDatabase projectDatabase;
     private AwesomeValidation awesomeValidation;
+    CheckBox showPass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        username = findViewById(R.id.username);
-        name = findViewById(R.id.name);
-        email = findViewById(R.id.email);
-        password = findViewById(R.id.password);
+        user = findViewById(R.id.user);
+        mail = findViewById(R.id.mail);
+        pass = findViewById(R.id.pass);
         register = findViewById(R.id.btnSignup);
         login = findViewById(R.id.btnLogin);
+        showPass = findViewById(R.id.showPass);
+        showPass.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    pass.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                } else {
+                    pass.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+                }
+            }
+        });
         awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
-        awesomeValidation.addValidation(this, R.id.username, "^[A-Za-z\\s]{1,}[\\.]{0,1}[A-Za-z\\s]{0,}$", R.string.usernameError);
-        awesomeValidation.addValidation(this, R.id.name, "^[A-Za-z\\s]{1,}[\\.]{0,1}[A-Za-z\\s]{0,}$", R.string.nameError);
+        awesomeValidation.addValidation(this, R.id.user, "^[A-Za-z\\s]{1,}[\\.]{0,1}[A-Za-z\\s]{0,}$", R.string.usernameError);
         String regexPassword = "(?=.*[a-z])(?=.*[A-Z])(?=.*[\\d])(?=.*[~`!@#\\$%\\^&\\*\\(\\)\\-_\\+=\\{\\}\\[\\]\\|\\;:\"<>,./\\?]).{8,}";
-        awesomeValidation.addValidation(this, R.id.password, regexPassword, R.string.err_password);
-        awesomeValidation.addValidation(this, R.id.email, Patterns.EMAIL_ADDRESS, R.string.emailError);
+        awesomeValidation.addValidation(this, R.id.pass, regexPassword, R.string.err_password);
+        awesomeValidation.addValidation(this, R.id.mail, Patterns.EMAIL_ADDRESS, R.string.emailError);
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,12 +64,11 @@ public class RegisterActivity extends AppCompatActivity {
                 try {
                     if (awesomeValidation.validate()) {
                         projectDatabase = new ProjectDatabase(RegisterActivity.this);
-                        strName = name.getText().toString();
-                        strEmail = email.getText().toString();
-                        strUserName = username.getText().toString();
-                        strPassword = password.getText().toString();
-                        Log.e("Register User", strName + " - " + strEmail + " - " + strUserName + " - " + strPassword);
-                        long val = projectDatabase.addUser(strName, strEmail, strUserName, strPassword);
+                        strEmail = mail.getText().toString();
+                        strUserName = user.getText().toString();
+                        strPassword = pass.getText().toString();
+                        Log.e("Register User", strEmail + " - " + strUserName + " - " + strPassword);
+                        long val = projectDatabase.addUser(strEmail, strUserName, strPassword);
                         if (val > 0) {
                             Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                             startActivity(intent);
