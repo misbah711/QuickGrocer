@@ -7,10 +7,15 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity
+            android:name=".User.NavActivity"
+            android:label="@string/title_activity_nav"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".Admin.OrderList" />
         <activity android:name=".User.SubCategoryList" />
         <activity android:name=".User.Checkout" />
@@ -19,19 +24,19 @@
         <activity android:name=".Admin.AddItem" />
         <activity android:name=".Admin.AdminDashboard" />
         <activity android:name=".OrderActivty" />
-        <activity android:name=".User.UserDashboardActivity" />
+        <!--        <activity android:name=".User.UserDashboardActivity" />-->
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".LoginActivity" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".User.NavgationActivity"/>
-        <activity android:name=".Splash" android:theme="@style/NoActionBar">
+        <activity
+            android:name=".Splash"
+            android:theme="@style/NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Admin.ListbyName"/>
+        <activity android:name=".Admin.ListbyName" />
     </application>
 
 </manifest>

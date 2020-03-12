@@ -70,13 +70,6 @@ public class OrderList extends AppCompatActivity {
         checkout.setVisibility(View.GONE);
         calculateTotal();
 
-        /*FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(ItemList.this, AddItem.class));
-            }
-        });*/
     }
 
     public void setAdapter() {
@@ -99,7 +92,7 @@ public class OrderList extends AppCompatActivity {
         String selection = Constants.order_custName + " = ?";
         String[] column = {Constants.cart_col_id, Constants.cart_col_itemName, Constants.cart_col_category, Constants.cart_col_sub_category,
                 Constants.cart_col_price, Constants.cart_col_image, Constants.cart_col_weight,
-                Constants.cart_col_quan, Constants.order_custName};
+                Constants.cart_col_quan, Constants.order_custName, Constants.order_col_userphoneno, Constants.order_col_useraddress};
         String[] args = {getUsername};
         Cursor cursor = db.query(distinct, Constants.order_tableName, column, selection, args, null, null, null, null, null);
 
@@ -114,8 +107,10 @@ public class OrderList extends AppCompatActivity {
                 String weight = cursor.getString(6);
                 int quan = cursor.getInt(7);
                 String custName = cursor.getString(8);
+                int custPhone = cursor.getInt(9);
+                String custAddress = cursor.getString(10);
 
-                long val = projectDatabase.insertAdminOrder(FoodName, Category, SubCategory, Price, Image, quan, custName, weight);
+                long val = projectDatabase.insertAdminOrder(FoodName, Category, SubCategory, Price, Image, quan, custName, weight, custPhone, custAddress);
                 Log.e("Val Added", String.valueOf(val));
 
                 orderModel = new OrderModel();
@@ -128,6 +123,8 @@ public class OrderList extends AppCompatActivity {
                 orderModel.setQty(quan);
                 orderModel.setWeight(weight);
                 orderModel.setCustName(custName);
+                orderModel.setPhoneNO(custPhone);
+                orderModel.setAddress(custAddress);
                 orderList.add(orderModel);
             } while (cursor.moveToNext());
         }
@@ -138,12 +135,13 @@ public class OrderList extends AppCompatActivity {
 
     }
 
-    public void clearTable(){
+    public void clearTable() {
         db = projectDatabase.getWritableDatabase();
         db.execSQL("delete from " + Constants.adminOrder_tableName);
         db.close();
         total = 0;
     }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -185,7 +183,9 @@ public class OrderList extends AppCompatActivity {
             final String weight = orderList.get(position).getWeight();
             final int Quan = orderList.get(position).getQty();
             final String CustName = orderList.get(position).getCustName();
-            //  holder.custName.setText(CustName);
+            final int phone = orderList.get(position).getPhoneNO();
+            final String address = orderList.get(position).getAddress();
+
             Log.e("Data", imageFood + "-" + name + price + subCategory);
             holder.edit.setVisibility(View.GONE);
             holder.Name.setText(name);
@@ -194,6 +194,8 @@ public class OrderList extends AppCompatActivity {
             holder.Price.setText("Rs. " + String.valueOf(price));
             holder.weight.setText(weight);
             holder.quan.setText(String.valueOf(Quan));
+            holder.phone.setText(String.valueOf(phone));
+            holder.address.setText(address);
 
             calculateTotal();
 
@@ -251,7 +253,7 @@ public class OrderList extends AppCompatActivity {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             ImageView icon, delete, edit;
-            TextView Name, Price, Category, SubCategory, weight, quan;
+            TextView Name, Price, Category, SubCategory, weight, quan, phone, address;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -264,7 +266,8 @@ public class OrderList extends AppCompatActivity {
                 quan = itemView.findViewById(R.id.item_quan);
                 delete = itemView.findViewById(R.id.delItem);
                 edit = itemView.findViewById(R.id.editItem);
-                //  custName = itemView.findViewById(R.id.custName);
+                phone = itemView.findViewById(R.id.custPhone);
+                address = itemView.findViewById(R.id.custAddress);
 
 
             }

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Enter your Details"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/custName"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:hint="Enter Name" />
+
+    <EditText
+        android:id="@+id/phoneNo"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="5dp"
+        android:hint="Enter Phone No"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/address"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="5dp"
+        android:hint="Enter Address"
+        android:inputType="textPostalAddress" />
+
+
+    <Button
+        android:id="@+id/confirmOrder"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/button"
+        android:text="Confirm My Order"
+        android:textSize="18sp"
+        android:textColor="#fff"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/cancel"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="10dp"
+        android:textColor="#fff"
+        android:background="@drawable/button"
+        android:text="Cancel"
+        android:textSize="18sp" />
+</LinearLayout>

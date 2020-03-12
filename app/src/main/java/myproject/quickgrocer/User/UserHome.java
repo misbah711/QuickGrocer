@@ -1,43 +1,35 @@
 package myproject.quickgrocer.User;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import myproject.quickgrocer.Admin.AddItem;
-import myproject.quickgrocer.Admin.AdminDashboard;
-import myproject.quickgrocer.Admin.ItemList;
-import myproject.quickgrocer.Database.ProjectDatabase;
-import myproject.quickgrocer.LoginActivity;
-import myproject.quickgrocer.MainActivity;
-import myproject.quickgrocer.R;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import myproject.quickgrocer.Admin.AddItem;
+import myproject.quickgrocer.Constants;
+import myproject.quickgrocer.Database.ProjectDatabase;
+import myproject.quickgrocer.MainActivity;
+import myproject.quickgrocer.R;
 
 import static myproject.quickgrocer.Constants.item_col_category;
 import static myproject.quickgrocer.Constants.item_tableName;
 
-public class UserDashboardActivity extends Fragment {
+public class UserHome extends Fragment {
     RecyclerView recyclerView;
     CategoriesAdapter categoriesAdapter;
     TextView textView;
@@ -53,7 +45,7 @@ public class UserDashboardActivity extends Fragment {
         recyclerView = root.findViewById(R.id.recyvlerView);
 
         textView = root.findViewById(R.id.usernameText);
-        user = LoginActivity.sendUser;
+        user = MainActivity.sendUser;
         textView.setText("Welcome\n" + user);
         projectDatabase = new ProjectDatabase(getContext());
         categoryList = new ArrayList<>();
@@ -66,33 +58,6 @@ public class UserDashboardActivity extends Fragment {
         recyclerView.setAdapter(categoriesAdapter);
         return root;
     }
-
-   
-
-  /*  @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.checkout_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.checkoout:
-                startActivity(new Intent(this, Checkout.class));
-                return true;
-            case R.id.logout:
-                startActivity(new Intent(this, MainActivity.class));
-                getContext().finish();
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }*/
-
 
     private ArrayList<String> readCategories() {
         db = projectDatabase.getReadableDatabase();
@@ -127,13 +92,13 @@ public class UserDashboardActivity extends Fragment {
 
         @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public CategoriesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(context).inflate(R.layout.category_list_items, parent, false);
-            return new ViewHolder(view);
+            return new CategoriesAdapter.ViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+        public void onBindViewHolder(@NonNull CategoriesAdapter.ViewHolder holder, final int position) {
             holder.itemView.requestLayout();
             final String categ = catList.get(position);
             holder.textView.setText(categ);
@@ -153,14 +118,11 @@ public class UserDashboardActivity extends Fragment {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Toast.makeText(context, categ, Toast.LENGTH_SHORT).show();
-                    SubCategoryList ldf = new SubCategoryList ();
+                    SubCategoryList ldf = new SubCategoryList();
                     Bundle args = new Bundle();
                     args.putString("Category", categ);
                     ldf.setArguments(args);
-
-//Inflate the fragment
-                    getFragmentManager().beginTransaction().add(R.id.container, ldf).commit();
+                    getFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, ldf).addToBackStack(null).commit();
                 }
             });
         }

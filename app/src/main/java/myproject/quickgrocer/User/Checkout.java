@@ -1,5 +1,6 @@
 package myproject.quickgrocer.User;
 
+import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ContentValues;
@@ -18,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +59,7 @@ public class Checkout extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.activity_checkout, container, false);
+
         recyclerView = root.findViewById(R.id.recyvlerView);
         projectDatabase = new ProjectDatabase(getContext());
         cartList = new ArrayList<>();
@@ -76,15 +79,31 @@ public class Checkout extends Fragment {
         checkout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle("Confirm Order");
-                builder.setMessage("Click OK to confirm Order");
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                final Dialog customDialog = new Dialog(getContext());
+                customDialog.setContentView(R.layout.activity_confirm_order);
+                customDialog.setCancelable(true);
+                customDialog.setTitle("Confirm Order...");
+
+                Button confirm = (Button) customDialog.findViewById(R.id.confirmOrder);
+                Button cancel = (Button) customDialog.findViewById(R.id.cancel);
+                final EditText name = customDialog.findViewById(R.id.custName);
+                final EditText phoneNo = customDialog.findViewById(R.id.phoneNo);
+                final EditText address = customDialog.findViewById(R.id.address);
+                // if button is clicked, close the custom dialog
+                cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(View v) {
+                        customDialog.cancel();
+                    }
+                });
+                confirm.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String nameStr = name.getText().toString();
+                        String addressStr = address.getText().toString();
+                        int phonenoStr = Integer.parseInt(phoneNo.getText().toString());
                         db = projectDatabase.getReadableDatabase();
                         Cursor cursor = db.rawQuery("Select id, ItemName, Category, SubCategory, Price, Image, Weight, Quantity From Cart", new String[]{});
-
                         if (cursor.moveToFirst()) {
                             do {
                                 int id = cursor.getInt(0);
@@ -98,9 +117,9 @@ public class Checkout extends Fragment {
 
 
                                 long res = projectDatabase.confirmOrder(Name, Category, SubCategory,
-                                        Price, Image, Weight, Quantity, UserDashboardActivity.user);
-                                Log.e("App Confirm", String.valueOf(res));
-                                Log.e("App Name", Name);
+                                        Price, Image, Weight, Quantity, nameStr, phonenoStr, addressStr);
+                                //Log.e("App Confirm", String.valueOf(res));
+                                //Log.e("App Name", Name);
 
                                 db = projectDatabase.getWritableDatabase();
                                 db.execSQL("delete from " + Constants.cart_tableName);
@@ -113,30 +132,22 @@ public class Checkout extends Fragment {
                         cursor.close();
 
                         Toast.makeText(getContext(), "Your Order is Confirmed", Toast.LENGTH_LONG).show();
-                        startActivity(new Intent(getContext(), UserDashboardActivity.class));
-                        getActivity().finish();
-                        sendNotification();
-                /*        projectDatabase.confirmOrder();
-                        Toast.makeText(getContext(), "Order has been Confirmed", Toast.LENGTH_LONG).show();
-                        startActivity(new Intent(getContext(), UserDashboardActivity.class));*/
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        startActivity(new Intent(getContext(), UserDashboardActivity.class));
+                        getFragmentManager().beginTransaction()
+                                .add(R.id.nav_host_fragment, new UserHome()).commit();
                         db = projectDatabase.getWritableDatabase();
                         db.execSQL("delete from " + Constants.cart_tableName);
                         db.close();
+                        customDialog.cancel();
+
+                        sendNotification();
                     }
                 });
-                builder.show();
 
+                customDialog.show();
             }
         });
         return root;
     }
-
 
     private void sendNotification() {
         NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
@@ -225,7 +236,7 @@ public class Checkout extends Fragment {
                 return super.onOptionsItemSelected(item);
         }
     }
-*/
+    */
     private class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         Context context;
         private List<Cart> cartList;

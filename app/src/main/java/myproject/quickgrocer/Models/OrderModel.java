@@ -7,6 +7,24 @@ public class OrderModel {
     int id;
     int qty;
     String CustName;
+    String address;
+    int phoneNO;
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public int getPhoneNO() {
+        return phoneNO;
+    }
+
+    public void setPhoneNO(int phoneNO) {
+        this.phoneNO = phoneNO;
+    }
 
     public String getCustName() {
         return CustName;

@@ -179,7 +179,7 @@ public class SubCategoryList extends Fragment {
                     ldf.setArguments(args);
 
 //Inflate the fragment
-                    getFragmentManager().beginTransaction().add(R.id.container, ldf).commit();
+                    getFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, ldf).addToBackStack(null).commit();
                 }
             });
         }

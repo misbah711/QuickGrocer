@@ -26,9 +26,9 @@ import myproject.quickgrocer.Database.ProjectDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    EditText user, pass, mail,mobileno,addr;
+    EditText user, pass, mail;
     Button register, login;
-    String strUserName, strPassword, strEmail, strAddress, MobileNumber;
+    String strUserName, strPassword, strEmail;
     ProjectDatabase projectDatabase;
     private AwesomeValidation awesomeValidation;
     CheckBox showPass;
@@ -40,8 +40,7 @@ public class RegisterActivity extends AppCompatActivity {
         user = findViewById(R.id.user);
         mail = findViewById(R.id.mail);
         pass = findViewById(R.id.pass);
-        mobileno=findViewById(R.id.mobileno);
-        addr=findViewById(R.id.addr);
+
         register = findViewById(R.id.btnSignup);
         login = findViewById(R.id.btnLogin);
         showPass = findViewById(R.id.showPass);
@@ -71,16 +70,17 @@ public class RegisterActivity extends AppCompatActivity {
                         strEmail = mail.getText().toString();
                         strUserName = user.getText().toString();
                         strPassword = pass.getText().toString();
-                        strAddress = addr.getText().toString();
-                        MobileNumber = mobileno.getText().toString();
-                        Log.e("Register User", strEmail + " - " + strUserName + " - " + strPassword + " - " + strAddress);
+
+                        Log.e("Register User", strEmail + " - " + strUserName + " - " + strPassword);
                         SQLiteDatabase db = projectDatabase.getReadableDatabase();
-//                        Cursor c = db.rawQuery("SELECT * FROM User where Username= " + strUserName, null);
-//                        if (c.getCount() > 0) {
-//                            Toast.makeText(getApplicationContext(), "USER ALREADY EXITS", Toast.LENGTH_LONG).show();
-//                        }
-//                        else {
-                            long val = projectDatabase.addUser(strEmail, strUserName, strPassword, Integer.parseInt(MobileNumber), strAddress);
+                        Cursor c = db.rawQuery("SELECT * FROM " + Constants.user_tableName + " where " +
+                                Constants.user_col_username + " =? ", new String[]{strUserName});
+
+                        Log.e("User Cursor", c.toString());
+                        if (c.getCount() > 0) {
+                            Toast.makeText(getApplicationContext(), "USER ALREADY EXITS", Toast.LENGTH_LONG).show();
+                        } else {
+                            long val = projectDatabase.addUser(strEmail, strUserName, strPassword);
                             if (val > 0) {
                                 Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                                 startActivity(intent);
@@ -97,7 +97,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 });
                                 builder.show();
                             }
-                      //  }
+                        }
                     }
                 } catch (Exception e) {
                     Log.e("Register Exception", e.getMessage());
@@ -118,7 +118,7 @@ public class RegisterActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                startActivity(new Intent(RegisterActivity.this, MainActivity.class));
 
             }
         });

@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,7 +14,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import myproject.quickgrocer.Admin.AdminDashboard;
 import myproject.quickgrocer.Database.ProjectDatabase;
-import myproject.quickgrocer.User.UserDashboardActivity;
+import myproject.quickgrocer.User.NavActivity;
+import myproject.quickgrocer.User.SubCategoryList;
+import myproject.quickgrocer.User.UserHome;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     String strUsername, strPassword;
     EditText username, password;
     Button register;
+    public static String sendUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 ProjectDatabase projectDatabase = new ProjectDatabase(MainActivity.this);
                 strUsername = username.getText().toString();
                 strPassword = password.getText().toString();
@@ -45,11 +46,16 @@ public class MainActivity extends AppCompatActivity {
                 boolean res = projectDatabase.checkUser(strUsername, strPassword);
                 if (res) {
                     Toast.makeText(MainActivity.this, "Successfully Login", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(MainActivity.this, UserDashboardActivity.class);
-                    intent.putExtra("Username", strUsername);
+                    Intent intent = new Intent(MainActivity.this, NavActivity.class);
                     startActivity(intent);
+                    sendUser = strUsername;
+
+                    /*getSupportFragmentManager().beginTransaction()
+                            .add(R.id.nav_host_fragment, new UserHome()).commit();*/
+
                 } else if (strUsername.contains("admin") && strPassword.contains("678")) {
                     startActivity(new Intent(MainActivity.this, AdminDashboard.class));
+                    finish();
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setTitle("Error");

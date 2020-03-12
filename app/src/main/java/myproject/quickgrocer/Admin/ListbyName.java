@@ -5,13 +5,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,12 +24,7 @@ import java.util.List;
 import myproject.quickgrocer.Database.ProjectDatabase;
 import myproject.quickgrocer.MainActivity;
 import myproject.quickgrocer.R;
-import myproject.quickgrocer.User.Checkout;
-import myproject.quickgrocer.User.SubCategoryList;
-import myproject.quickgrocer.User.UserDashboardActivity;
 
-import static myproject.quickgrocer.Constants.item_col_category;
-import static myproject.quickgrocer.Constants.item_tableName;
 import static myproject.quickgrocer.Constants.order_custName;
 import static myproject.quickgrocer.Constants.order_tableName;
 
