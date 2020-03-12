@@ -1,7 +1,9 @@
 package myproject.quickgrocer.User;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,7 +38,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserItemList extends AppCompatActivity {
+public class UserItemList extends Fragment {
     RecyclerView recyclerView;
     UserFoodListAdapter userFoodListAdapter;
     ProjectDatabase projectDatabase;
@@ -45,25 +47,31 @@ public class UserItemList extends AppCompatActivity {
     String getSubCat, getCat;
     ItemModel itemModel;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list);
-        getCat = getIntent().getStringExtra("Category");
-        getSubCat = getIntent().getStringExtra("SubCategory");
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.activity_list, container, false);
+        getCat = getArguments().getString("Category");
+        getSubCat = getArguments().getString("SubCategory");
 
-        recyclerView = findViewById(R.id.recyvlerView);
+        //  getCat = getIntent().getStringExtra("Category");
+        // getSubCat = getIntent().getStringExtra("SubCategory");
 
-        projectDatabase = new ProjectDatabase(UserItemList.this);
+        recyclerView = root.findViewById(R.id.recyvlerView);
+
+        projectDatabase = new ProjectDatabase(getContext());
         foodList = new ArrayList<>();
 
-        recyclerView = findViewById(R.id.recyvlerView);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView = root.findViewById(R.id.recyvlerView);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        userFoodListAdapter = new UserFoodListAdapter(UserItemList.this, readFoodList());
+        userFoodListAdapter = new UserFoodListAdapter(getContext(), readFoodList());
         recyclerView.setAdapter(userFoodListAdapter);
+
+        return root;
     }
+
 
     private ArrayList<ItemModel> readFoodList() {
         boolean distinct = true;
@@ -99,7 +107,7 @@ public class UserItemList extends AppCompatActivity {
         return foodList;
     }
 
-    @Override
+   /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.checkout_menu, menu);
@@ -115,13 +123,13 @@ public class UserItemList extends AppCompatActivity {
                 return true;
             case R.id.logout:
                 startActivity(new Intent(this, MainActivity.class));
-                UserItemList.this.finish();
+                getContext().finish();
                 return true;
 
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
+    }*/
 
     public class UserFoodListAdapter extends RecyclerView.Adapter<UserFoodListAdapter.ViewHolder> {
         private List<ItemModel> foodList;
@@ -156,7 +164,7 @@ public class UserItemList extends AppCompatActivity {
             if (image.length() > 0) {
                 String uri = "@drawable/" + image;
                 Log.e("image", uri);
-                int imageResource = getResources().getIdentifier(uri, null, getPackageName());
+                int imageResource = getResources().getIdentifier(uri, null, getContext().getPackageName());
                 try {
                     Drawable res = getResources().getDrawable(imageResource);
                     holder.imageView.setImageDrawable(res);
@@ -181,9 +189,9 @@ public class UserItemList extends AppCompatActivity {
                     try {
                         long res = projectDatabase.insertCart(FoodName, cart.getCategory(), cart.getSubCategory(), cart.getPrice(), cart.getImg(), cart.getWeight(), cart.getQty());
                         if (res > 0) {
-                            Toast.makeText(UserItemList.this, "Item Added to your Cart", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Item Added to your Cart", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(UserItemList.this, "Something Went Wrong", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Something Went Wrong", Toast.LENGTH_SHORT).show();
 
                         }
                     } catch (Exception e) {

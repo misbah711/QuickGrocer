@@ -6,4 +6,6 @@
     <string name="nameError">Enter Valid Name</string>
     <string name="emailError">Enter Valid Email</string>
     <string name="err_password">Enter a Valid Password</string>
+    <string name="navigation_drawer_open">Drawer Open</string>
+    <string name="navigation_drawer_close">Drawer Close</string>
 </resources>

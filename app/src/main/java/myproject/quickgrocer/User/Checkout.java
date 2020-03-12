@@ -1,5 +1,7 @@
 package myproject.quickgrocer.User;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,8 +23,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,7 +43,7 @@ import myproject.quickgrocer.MainActivity;
 import myproject.quickgrocer.Models.Cart;
 import myproject.quickgrocer.R;
 
-public class Checkout extends AppCompatActivity {
+public class Checkout extends Fragment {
     RecyclerView recyclerView;
     CartAdapter cartAdapter;
     ProjectDatabase projectDatabase;
@@ -48,31 +53,30 @@ public class Checkout extends AppCompatActivity {
     TextView totalPrice;
     Button checkout;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_checkout);
-
-        recyclerView = findViewById(R.id.recyvlerView);
-        projectDatabase = new ProjectDatabase(Checkout.this);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.activity_checkout, container, false);
+        recyclerView = root.findViewById(R.id.recyvlerView);
+        projectDatabase = new ProjectDatabase(getContext());
         cartList = new ArrayList<>();
 
 
-        recyclerView = findViewById(R.id.recyvlerView);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView = root.findViewById(R.id.recyvlerView);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        cartAdapter = new CartAdapter(Checkout.this, readcartList());
+        cartAdapter = new CartAdapter(getContext(), readcartList());
         recyclerView.setAdapter(cartAdapter);
 
-        totalPrice = findViewById(R.id.totalPrice);
-        checkout = findViewById(R.id.confirm);
+        totalPrice = root.findViewById(R.id.totalPrice);
+        checkout = root.findViewById(R.id.confirm);
 
         checkout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(Checkout.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle("Confirm Order");
                 builder.setMessage("Click OK to confirm Order");
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -108,18 +112,19 @@ public class Checkout extends AppCompatActivity {
 
                         cursor.close();
 
-                        Toast.makeText(Checkout.this, "Your Order is Confirmed", Toast.LENGTH_LONG).show();
-                        startActivity(new Intent(Checkout.this, UserDashboardActivity.class));
-                        Checkout.this.finish();
+                        Toast.makeText(getContext(), "Your Order is Confirmed", Toast.LENGTH_LONG).show();
+                        startActivity(new Intent(getContext(), UserDashboardActivity.class));
+                        getActivity().finish();
+                        sendNotification();
                 /*        projectDatabase.confirmOrder();
-                        Toast.makeText(Checkout.this, "Order has been Confirmed", Toast.LENGTH_LONG).show();
-                        startActivity(new Intent(Checkout.this, UserDashboardActivity.class));*/
+                        Toast.makeText(getContext(), "Order has been Confirmed", Toast.LENGTH_LONG).show();
+                        startActivity(new Intent(getContext(), UserDashboardActivity.class));*/
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        startActivity(new Intent(Checkout.this, UserDashboardActivity.class));
+                        startActivity(new Intent(getContext(), UserDashboardActivity.class));
                         db = projectDatabase.getWritableDatabase();
                         db.execSQL("delete from " + Constants.cart_tableName);
                         db.close();
@@ -129,11 +134,34 @@ public class Checkout extends AppCompatActivity {
 
             }
         });
+        return root;
+    }
+
+
+    private void sendNotification() {
+        NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        int notificationId = 1;
+        String channelId = "channel-01";
+        String channelName = "Channel Name";
+        int importance = NotificationManager.IMPORTANCE_HIGH;
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel mChannel = new NotificationChannel(
+                    channelId, channelName, importance);
+            notificationManager.createNotificationChannel(mChannel);
+        }
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext(), channelId)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("Order Confirm")
+                .setContentText("Your Order is Confirm");
+
+        notificationManager.notify(notificationId, mBuilder.build());
     }
 
     public void setAdapter() {
         cartList.clear();
-        cartAdapter = new CartAdapter(Checkout.this, readcartList());
+        cartAdapter = new CartAdapter(getContext(), readcartList());
         recyclerView.setAdapter(cartAdapter);
     }
 
@@ -174,7 +202,7 @@ public class Checkout extends AppCompatActivity {
         return cartList;
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.checkout_menu, menu);
@@ -190,14 +218,14 @@ public class Checkout extends AppCompatActivity {
                 return true;
             case R.id.logout:
                 startActivity(new Intent(this, MainActivity.class));
-                Checkout.this.finish();
+                getContext().finish();
                 return true;
 
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
+*/
     private class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         Context context;
         private List<Cart> cartList;
@@ -241,7 +269,7 @@ public class Checkout extends AppCompatActivity {
             if (imageItem.length() > 0) {
                 String uri = "@drawable/" + imageItem;
                 Log.e("image", uri);
-                int imageResource = getResources().getIdentifier(uri, null, getPackageName());
+                int imageResource = getResources().getIdentifier(uri, null, getContext().getPackageName());
                 try {
                     Drawable res = getResources().getDrawable(imageResource);
                     holder.icon.setImageDrawable(res);

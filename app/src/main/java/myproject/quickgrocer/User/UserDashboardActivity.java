@@ -16,7 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +27,7 @@ import myproject.quickgrocer.Admin.AddItem;
 import myproject.quickgrocer.Admin.AdminDashboard;
 import myproject.quickgrocer.Admin.ItemList;
 import myproject.quickgrocer.Database.ProjectDatabase;
+import myproject.quickgrocer.LoginActivity;
 import myproject.quickgrocer.MainActivity;
 import myproject.quickgrocer.R;
 
@@ -34,7 +37,7 @@ import java.util.List;
 import static myproject.quickgrocer.Constants.item_col_category;
 import static myproject.quickgrocer.Constants.item_tableName;
 
-public class UserDashboardActivity extends AppCompatActivity {
+public class UserDashboardActivity extends Fragment {
     RecyclerView recyclerView;
     CategoriesAdapter categoriesAdapter;
     TextView textView;
@@ -43,28 +46,30 @@ public class UserDashboardActivity extends AppCompatActivity {
     public static String user;
     ArrayList<String> categoryList;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dashboard);
-        recyclerView = findViewById(R.id.recyvlerView);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.activity_dashboard, container, false);
+        recyclerView = root.findViewById(R.id.recyvlerView);
 
-        textView = findViewById(R.id.usernameText);
-        user = getIntent().getStringExtra("Username");
+        textView = root.findViewById(R.id.usernameText);
+        user = LoginActivity.sendUser;
         textView.setText("Welcome\n" + user);
-        projectDatabase = new ProjectDatabase(UserDashboardActivity.this);
+        projectDatabase = new ProjectDatabase(getContext());
         categoryList = new ArrayList<>();
 
-        recyclerView = findViewById(R.id.recyvlerView);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView = root.findViewById(R.id.recyvlerView);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        categoriesAdapter = new CategoriesAdapter(UserDashboardActivity.this, readCategories());
+        categoriesAdapter = new CategoriesAdapter(getContext(), readCategories());
         recyclerView.setAdapter(categoriesAdapter);
-
+        return root;
     }
 
-    @Override
+   
+
+  /*  @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.checkout_menu, menu);
@@ -80,13 +85,13 @@ public class UserDashboardActivity extends AppCompatActivity {
                 return true;
             case R.id.logout:
                 startActivity(new Intent(this, MainActivity.class));
-                UserDashboardActivity.this.finish();
+                getContext().finish();
                 return true;
 
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
+    }*/
 
 
     private ArrayList<String> readCategories() {
@@ -98,7 +103,7 @@ public class UserDashboardActivity extends AppCompatActivity {
                 String Category = cursor.getString(0);
                 //Log.e("Category List", Category);
                 categoryList.add(Category);
-               // Log.e("List", categoryList.toString());
+                // Log.e("List", categoryList.toString());
 
             } while (cursor.moveToNext());
         }
@@ -149,9 +154,13 @@ public class UserDashboardActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     // Toast.makeText(context, categ, Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(UserDashboardActivity.this, SubCategoryList.class);
-                    intent.putExtra("Category", categ);
-                    startActivity(intent);
+                    SubCategoryList ldf = new SubCategoryList ();
+                    Bundle args = new Bundle();
+                    args.putString("Category", categ);
+                    ldf.setArguments(args);
+
+//Inflate the fragment
+                    getFragmentManager().beginTransaction().add(R.id.container, ldf).commit();
                 }
             });
         }

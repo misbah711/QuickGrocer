@@ -8,6 +8,8 @@ public class Constants {
     public static String user_col_email = "Email";
     public static String user_col_username = "Username";
     public static String user_col_password = "Password";
+    public static String user_col_userphoneno = "PhoneNo";
+    public static String user_col_useraddress = "Address";
 
     public static String item_tableName = "Items";
     public static String item_col_id = "id";

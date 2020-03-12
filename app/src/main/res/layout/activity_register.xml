@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/bg">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -52,6 +53,31 @@
                 android:textColor="@color/white"
                 android:textColorHint="@color/white"
                 android:textSize="20sp" />
+            <EditText
+                android:id="@+id/mobileno"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/button"
+                android:gravity="center"
+                android:hint="Monile Number"
+                android:inputType="number"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:textSize="20sp" />
+            <EditText
+                android:id="@+id/addr"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/button"
+                android:gravity="center"
+                android:hint="Address"
+                android:inputType="text"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:textSize="20sp" />
+
 
 
             <EditText

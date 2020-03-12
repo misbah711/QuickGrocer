@@ -1,7 +1,9 @@
 package myproject.quickgrocer.User;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,7 +37,7 @@ import static myproject.quickgrocer.Constants.item_col_category;
 import static myproject.quickgrocer.Constants.item_col_sub_category;
 import static myproject.quickgrocer.Constants.item_tableName;
 
-public class SubCategoryList extends AppCompatActivity {
+public class SubCategoryList extends Fragment {
 
     String getCat;
     RecyclerView recyclerView;
@@ -44,23 +46,25 @@ public class SubCategoryList extends AppCompatActivity {
     SubCategoryAdapter subCategoryAdapter;
     SQLiteDatabase db;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list);
-        getCat = getIntent().getStringExtra("Category");
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.activity_list, container, false);
+        getCat = getArguments().getString("Category");
 
-        recyclerView = findViewById(R.id.recyvlerView);
-        projectDatabase = new ProjectDatabase(SubCategoryList.this);
+        recyclerView = root.findViewById(R.id.recyvlerView);
+        projectDatabase = new ProjectDatabase(getContext());
         subCategoryList = new ArrayList<>();
 
-        recyclerView = findViewById(R.id.recyvlerView);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView = root.findViewById(R.id.recyvlerView);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        subCategoryAdapter = new SubCategoryAdapter(SubCategoryList.this, readSubCategories());
+        subCategoryAdapter = new SubCategoryAdapter(getContext(), readSubCategories());
         recyclerView.setAdapter(subCategoryAdapter);
+        return root;
     }
+    
 
     private ArrayList<String> readSubCategories() {
         db = projectDatabase.getReadableDatabase();
@@ -84,7 +88,7 @@ public class SubCategoryList extends AppCompatActivity {
 
     }
 
-    @Override
+   /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.checkout_menu, menu);
@@ -100,13 +104,13 @@ public class SubCategoryList extends AppCompatActivity {
                 return true;
             case R.id.logout:
                 startActivity(new Intent(this, MainActivity.class));
-                SubCategoryList.this.finish();
+                getContext().finish();
                 return true;
 
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
+    }*/
 
 
     public class SubCategoryAdapter extends RecyclerView.Adapter<SubCategoryAdapter.ViewHolder> {
@@ -167,10 +171,15 @@ public class SubCategoryList extends AppCompatActivity {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(SubCategoryList.this, UserItemList.class);
-                    intent.putExtra("Category", getCat);
-                    intent.putExtra("SubCategory", subCat);
-                    startActivity(intent);
+
+                    UserItemList ldf = new UserItemList ();
+                    Bundle args = new Bundle();
+                    args.putString("Category", getCat);
+                    args.putString("SubCategory", subCat);
+                    ldf.setArguments(args);
+
+//Inflate the fragment
+                    getFragmentManager().beginTransaction().add(R.id.container, ldf).commit();
                 }
             });
         }

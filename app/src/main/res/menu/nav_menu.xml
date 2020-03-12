@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="nevigation_view">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/home"
+            android:icon="@drawable/ic_home_black_24dp"
+            android:title="Home"></item>
+        <item
+            android:id="@+id/checkout"
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="Checkout"></item>
+        <item
+            android:id="@+id/log"
+            android:icon="@drawable/ic_power_settings_new_black_24dp"
+            android:title="Logout"></item>
+        <item
+            android:id="@+id/catogory"
+            android:icon="@drawable/ic_power_settings_new_black_24dp"
+
+            android:title="catogory"></item>
+        <item
+            android:id="@+id/order"
+            android:title="order"></item>
+        <item
+            android:id="@+id/chekout"
+            android:title="chekout"></item>
+    </group>
+    <item android:title="Communication">
+        <menu>
+            <item
+                android:id="@+id/call_us"
+                android:title="contact" />
+        </menu>
+    </item>
+
+
+</menu>

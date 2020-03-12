@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import myproject.quickgrocer.Admin.AdminDashboard;
 import myproject.quickgrocer.Database.ProjectDatabase;
+import myproject.quickgrocer.User.NavgationActivity;
 import myproject.quickgrocer.User.UserDashboardActivity;
 
 public class LoginActivity extends AppCompatActivity {
@@ -21,6 +22,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText username, password;
     Button login, register;
     String strUsername, strPassword;
+    public static String sendUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +44,10 @@ public class LoginActivity extends AppCompatActivity {
                 boolean res = projectDatabase.checkUser(strUsername, strPassword);
                 if (res) {
                     Toast.makeText(LoginActivity.this, "Successfully Login", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginActivity.this, UserDashboardActivity.class);
-                    intent.putExtra("Username", strUsername);
+                    Intent intent = new Intent(LoginActivity.this, NavgationActivity.class);
+                    //intent.putExtra("Username", strUsername);
                     startActivity(intent);
+                    sendUser = strUsername;
                 } else if (strUsername.equals("admin") && strPassword.equals("678")) {
                     startActivity(new Intent(LoginActivity.this, AdminDashboard.class));
                 } else {

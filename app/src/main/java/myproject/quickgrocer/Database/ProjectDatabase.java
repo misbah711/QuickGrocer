@@ -43,7 +43,9 @@ import static myproject.quickgrocer.Constants.order_tableName;
 import static myproject.quickgrocer.Constants.user_col_email;
 import static myproject.quickgrocer.Constants.user_col_id;
 import static myproject.quickgrocer.Constants.user_col_password;
+import static myproject.quickgrocer.Constants.user_col_useraddress;
 import static myproject.quickgrocer.Constants.user_col_username;
+import static myproject.quickgrocer.Constants.user_col_userphoneno;
 import static myproject.quickgrocer.Constants.user_tableName;
 
 public class ProjectDatabase extends SQLiteOpenHelper {
@@ -59,6 +61,8 @@ public class ProjectDatabase extends SQLiteOpenHelper {
                 user_col_id + " integer primary key autoincrement, " +
                 user_col_email + " text, " +
                 user_col_username + " text, " +
+                user_col_userphoneno + " text, " +
+                user_col_useraddress + " text, " +
                 user_col_password + " text)"
         );
         db.execSQL("create table " + item_tableName + "(" +
@@ -113,12 +117,14 @@ public class ProjectDatabase extends SQLiteOpenHelper {
     }
 
     //    start Login or Register
-    public long addUser(String email, String userName, String password) {
+    public long addUser(String email, String userName, String password, int phoneno, String address) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(user_col_email, email);
         contentValues.put(user_col_username, userName);
         contentValues.put(user_col_password, password);
+        contentValues.put(user_col_userphoneno, phoneno);
+        contentValues.put(user_col_useraddress, address);
         long res = db.insert(user_tableName, null, contentValues);
         db.close();
         Log.e("addUser res", String.valueOf(res));
@@ -173,7 +179,8 @@ public class ProjectDatabase extends SQLiteOpenHelper {
         return res;
     }
 
-    public long confirmOrder(String FoodName, String Category, String subCategory, double Price, String image, String weight, int qty, String CustName) {
+    public long confirmOrder(String FoodName, String Category, String subCategory, double Price,
+                             String image, String weight, int qty, String CustName) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(cart_col_itemName, FoodName);
@@ -184,6 +191,9 @@ public class ProjectDatabase extends SQLiteOpenHelper {
         contentValues.put(cart_col_weight, weight);
         contentValues.put(cart_col_quan, qty);
         contentValues.put(order_custName, CustName);
+//        contentValues.put(user_col_userphoneno, phoneNo);
+//        contentValues.put(user_col_useraddress, Address);
+
         long res = db.insert(order_tableName, null, contentValues);
         db.close();
         Log.e("Cart res", String.valueOf(res));
@@ -201,6 +211,8 @@ public class ProjectDatabase extends SQLiteOpenHelper {
         contentValues.put(adminOrder_col_image, image);
         contentValues.put(adminOrder_col_qty, qty);
         contentValues.put(adminOrder_userName, CustName);
+//        contentValues.put(user_col_userphoneno, mobile);
+//        contentValues.put(user_col_useraddress, address);
         contentValues.put(adminOrder_col_weight, Weight);
 
         long res = db.insert(adminOrder_tableName, null, contentValues);

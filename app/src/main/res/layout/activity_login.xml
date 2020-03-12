@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg"
     tools:context=".LoginActivity">
 
     <LinearLayout
@@ -28,13 +29,12 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:inputType="text"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:textColor="@color/white"
             android:textColorHint="@color/white"
             android:gravity="center"
             android:textSize="20sp"
             android:background="@drawable/button"
-
             android:hint="Username" />
 
         <EditText
@@ -44,7 +44,7 @@
             android:textColor="@color/white"
             android:textColorHint="@color/white"
             android:gravity="center"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:hint="Password"
             android:textSize="20sp"
             android:background="@drawable/button"
