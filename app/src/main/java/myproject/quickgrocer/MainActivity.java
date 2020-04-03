@@ -20,7 +20,7 @@ import myproject.quickgrocer.User.UserHome;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button login, signup;
+    Button login;
     String strUsername, strPassword;
     EditText username, password;
     Button register;

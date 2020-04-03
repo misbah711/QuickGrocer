@@ -46,7 +46,7 @@ public class NavActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.home, R.id.checkout, R.id.logout)
+                R.id.home, R.id.checkout, R.id.about, R.id.logout)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -65,10 +65,11 @@ public class NavActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.logout:
-
+           /* case R.id.checkout_menu:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        new UserHome()).commit();
+                        new UserHome()).commit();*/
+            case R.id.logout:
+                startActivity(new Intent(NavActivity.this, MainActivity.class));
                 return true;
 
             default:

@@ -14,8 +14,19 @@
     <fragment
         android:id="@+id/checkout"
         android:name="myproject.quickgrocer.User.Checkout"
-        android:label="@string/menu_gallery"
+        android:label="Checkout"
         tools:layout="@layout/activity_checkout" />
+
+    <fragment
+        android:id="@+id/about"
+        android:name="myproject.quickgrocer.User.AboutFragment"
+        android:label="About"
+        tools:layout="@layout/fragment_about"/>
+
+    <activity
+        android:id="@+id/logout"
+        android:name="myproject.quickgrocer.MainActivity"
+        tools:layout="@layout/activity_main" />
 
 
 </navigation>
