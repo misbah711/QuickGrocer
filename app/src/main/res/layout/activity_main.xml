@@ -56,7 +56,7 @@
             android:id="@+id/login"
             style="@style/Base.Widget.AppCompat.Button.Colored"
             android:layout_width="150dp"
-            android:layout_height="50dp"
+            android:layout_height="60dp"
             android:textSize="20sp"
             android:layout_marginTop="20dp"
             android:text="Login" />
@@ -65,7 +65,7 @@
             android:id="@+id/signup"
             style="@style/Base.Widget.AppCompat.Button.Colored"
             android:layout_width="150dp"
-            android:layout_height="50dp"
+            android:layout_height="60dp"
             android:textSize="20sp"
             android:text="Register" />
 

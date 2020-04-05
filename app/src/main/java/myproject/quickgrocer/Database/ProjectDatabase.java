@@ -181,7 +181,7 @@ public class ProjectDatabase extends SQLiteOpenHelper {
     }
 
     public long confirmOrder(String FoodName, String Category, String subCategory, double Price,
-                             String image, String weight, int qty, String CustName, int phoneno, String address) {
+                             String image, String weight, int qty, String CustName, String phoneno, String address) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(cart_col_itemName, FoodName);
@@ -203,7 +203,7 @@ public class ProjectDatabase extends SQLiteOpenHelper {
     }
 
     public long insertAdminOrder(String FoodName, String Category, String SubCategory,
-                                 double Price, String image, int qty, String CustName, String Weight, int mobile, String address) {
+                                 double Price, String image, int qty, String CustName, String Weight, String mobile, String address) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(adminOrder_col_itemName, FoodName);

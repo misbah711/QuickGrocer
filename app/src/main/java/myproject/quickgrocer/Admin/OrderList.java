@@ -107,7 +107,7 @@ public class OrderList extends AppCompatActivity {
                 String weight = cursor.getString(6);
                 int quan = cursor.getInt(7);
                 String custName = cursor.getString(8);
-                int custPhone = cursor.getInt(9);
+                String custPhone = cursor.getString(9);
                 String custAddress = cursor.getString(10);
 
                 long val = projectDatabase.insertAdminOrder(FoodName, Category, SubCategory, Price, Image, quan, custName, weight, custPhone, custAddress);
@@ -166,7 +166,7 @@ public class OrderList extends AppCompatActivity {
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(context).inflate(R.layout.food_listitems, parent, false);
+            View view = LayoutInflater.from(context).inflate(R.layout.order_list_item, parent, false);
 
             return new ViewHolder(view);
         }
@@ -183,7 +183,7 @@ public class OrderList extends AppCompatActivity {
             final String weight = orderList.get(position).getWeight();
             final int Quan = orderList.get(position).getQty();
             final String CustName = orderList.get(position).getCustName();
-            final int phone = orderList.get(position).getPhoneNO();
+            final String phone = orderList.get(position).getPhoneNO();
             final String address = orderList.get(position).getAddress();
 
             Log.e("Data", imageFood + "-" + name + price + subCategory);
@@ -193,7 +193,7 @@ public class OrderList extends AppCompatActivity {
             holder.SubCategory.setText(subCategory);
             holder.Price.setText("Rs. " + String.valueOf(price));
             holder.weight.setText(weight);
-            holder.quan.setText(String.valueOf(Quan));
+            holder.quan.setText("Qty: " + String.valueOf(Quan));
             holder.phone.setText(String.valueOf(phone));
             holder.address.setText(address);
 

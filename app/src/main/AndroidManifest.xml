@@ -23,7 +23,6 @@
         <activity android:name=".Admin.ItemList" />
         <activity android:name=".Admin.AddItem" />
         <activity android:name=".Admin.AdminDashboard" />
-        <activity android:name=".OrderActivty" />
         <!--        <activity android:name=".User.UserDashboardActivity" />-->
         <activity android:name=".RegisterActivity" />
         <activity android:name=".MainActivity" />

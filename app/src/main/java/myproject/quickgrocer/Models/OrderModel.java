@@ -8,7 +8,7 @@ public class OrderModel {
     int qty;
     String CustName;
     String address;
-    int phoneNO;
+    String phoneNO;
 
     public String getAddress() {
         return address;
@@ -18,11 +18,11 @@ public class OrderModel {
         this.address = address;
     }
 
-    public int getPhoneNO() {
+    public String getPhoneNO() {
         return phoneNO;
     }
 
-    public void setPhoneNO(int phoneNO) {
+    public void setPhoneNO(String phoneNO) {
         this.phoneNO = phoneNO;
     }
 

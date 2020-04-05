@@ -66,9 +66,7 @@ public class UserHome extends Fragment {
         if (cursor.moveToFirst()) {
             do {
                 String Category = cursor.getString(0);
-                //Log.e("Category List", Category);
                 categoryList.add(Category);
-                // Log.e("List", categoryList.toString());
 
             } while (cursor.moveToNext());
         }

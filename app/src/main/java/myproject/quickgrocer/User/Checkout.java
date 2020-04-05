@@ -34,6 +34,9 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.basgeekball.awesomevalidation.AwesomeValidation;
+import com.basgeekball.awesomevalidation.ValidationStyle;
+import com.basgeekball.awesomevalidation.utility.RegexTemplate;
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 
 import java.util.ArrayList;
@@ -96,50 +99,59 @@ public class Checkout extends Fragment {
                         customDialog.cancel();
                     }
                 });
+
                 confirm.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String nameStr = name.getText().toString();
-                        String addressStr = address.getText().toString();
-                        int phonenoStr = Integer.parseInt(phoneNo.getText().toString());
-                        db = projectDatabase.getReadableDatabase();
-                        Cursor cursor = db.rawQuery("Select id, ItemName, Category, SubCategory, Price, Image, Weight, Quantity From Cart", new String[]{});
-                        if (cursor.moveToFirst()) {
-                            do {
-                                int id = cursor.getInt(0);
-                                String Name = cursor.getString(1);
-                                String Category = cursor.getString(2);
-                                String SubCategory = cursor.getString(3);
-                                double Price = cursor.getDouble(4);
-                                String Image = cursor.getString(5);
-                                String Weight = cursor.getString(6);
-                                int Quantity = cursor.getInt(7);
 
-
-                                long res = projectDatabase.confirmOrder(Name, Category, SubCategory,
-                                        Price, Image, Weight, Quantity, nameStr, phonenoStr, addressStr);
-                                //Log.e("App Confirm", String.valueOf(res));
-                                //Log.e("App Name", Name);
-
-                                db = projectDatabase.getWritableDatabase();
-                                db.execSQL("delete from " + Constants.cart_tableName);
-                                db.close();
-
-
-                            } while (cursor.moveToNext());
+                       // String regexStr = "^\\+[0-9]{10,12}$";
+                        String number = phoneNo.getText().toString();
+                        if (phoneNo.getText().toString().length() != 11) {
+                            Toast.makeText(getContext(), "Please enter a valid number", Toast.LENGTH_SHORT).show();
                         }
+                        else {
+                            String nameStr = name.getText().toString();
+                            String addressStr = address.getText().toString();
+                            String phonenoStr = phoneNo.getText().toString();
+                            db = projectDatabase.getReadableDatabase();
+                            Cursor cursor = db.rawQuery("Select id, ItemName, Category, SubCategory, Price, Image, Weight, Quantity From Cart", new String[]{});
+                            if (cursor.moveToFirst()) {
+                                do {
+                                    int id = cursor.getInt(0);
+                                    String Name = cursor.getString(1);
+                                    String Category = cursor.getString(2);
+                                    String SubCategory = cursor.getString(3);
+                                    double Price = cursor.getDouble(4);
+                                    String Image = cursor.getString(5);
+                                    String Weight = cursor.getString(6);
+                                    int Quantity = cursor.getInt(7);
 
-                        cursor.close();
 
-                        Toast.makeText(getContext(), "Your Order is Confirmed", Toast.LENGTH_LONG).show();
-                        getFragmentManager().beginTransaction()
-                                .add(R.id.nav_host_fragment, new UserHome()).commit();
-                        db = projectDatabase.getWritableDatabase();
-                        db.execSQL("delete from " + Constants.cart_tableName);
-                        db.close();
-                        customDialog.cancel();
+                                    long res = projectDatabase.confirmOrder(Name, Category, SubCategory,
+                                            Price, Image, Weight, Quantity, nameStr, phonenoStr, addressStr);
+                                    //Log.e("App Confirm", String.valueOf(res));
+                                    //Log.e("App Name", Name);
 
-                        sendNotification();
+                                    db = projectDatabase.getWritableDatabase();
+                                    db.execSQL("delete from " + Constants.cart_tableName);
+                                    db.close();
+
+
+                                } while (cursor.moveToNext());
+                            }
+
+                            cursor.close();
+
+                            Toast.makeText(getContext(), "Your Order is Confirmed", Toast.LENGTH_LONG).show();
+                            getFragmentManager().beginTransaction()
+                                    .add(R.id.nav_host_fragment, new UserHome()).commit();
+                            db = projectDatabase.getWritableDatabase();
+                            db.execSQL("delete from " + Constants.cart_tableName);
+                            db.close();
+                            customDialog.cancel();
+
+                            sendNotification();
+                        }
                     }
                 });
 
